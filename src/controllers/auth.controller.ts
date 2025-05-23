@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import * as authService from '../services/auth.service'
-import { sendResponse } from '../utils/sendResponse'
-import { loginResponseSchema, registerResponseSchema, errorResponseSchema } from '../response-schema'
+import * as authService from '@/services/auth.service'
+import { sendResponse } from '@/utils/sendResponse'
+import { loginResponseSchema, registerResponseSchema, errorResponseSchema } from '@/response-schema'
 
 /**
  * Handles user login request

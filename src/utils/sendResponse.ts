@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { z } from 'zod'
-import { baseResponseSchema, BaseResponse } from '../response-schema'
+import { baseResponseSchema, BaseResponse } from '@/response-schema'
 
 type SendResponseOptions<T> = {
   res: Response

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { baseResponseSchema } from './base.schema'
+import { baseResponseSchema } from '@/response-schema/base.schema'
 
 const userSchema = z.object({
   id: z.string(),
