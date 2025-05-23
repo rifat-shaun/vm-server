@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../generated/prisma'
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-
-const prisma = new PrismaClient()
+import { UserRepository, CreateUserData } from '@/repositories/user.repository'
+import { AppError, ERROR_CODES } from '@/utils/errors'
+import { LoginRequestDto } from '@/dtos/auth.dto'
 
 /**
  * Validates user credentials and returns user data without password
@@ -10,27 +10,17 @@ const prisma = new PrismaClient()
  * @param password - User's password
  * @returns User data if valid, null if invalid
  */
-export const validateUser = async (email: string, password: string) => {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: {
-      id: true,
-      email: true,
-      password: true,
-      firstName: true,
-      lastName: true,
-      role: true
-    }
-  })
+export const validateUser = async ({ email, password }: LoginRequestDto) => {
+  const user = await UserRepository.findByEmail(email)
 
   if (!user) {
-    return null
+    throw AppError.unauthorized('Invalid credentials')
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password)
 
   if (!isPasswordValid) {
-    return null
+    throw AppError.unauthorized('Invalid credentials')
   }
 
   const { password: _, ...userWithoutPassword } = user
@@ -43,10 +33,14 @@ export const validateUser = async (email: string, password: string) => {
  * @param role - User's role
  * @returns JWT token
  */
-export const generateToken = (userId: string, role: string) => {
+export const generateToken = (userId: string, role: string): string => {
+  if (!process.env.JWT_SECRET) {
+    throw AppError.internal('JWT secret not configured')
+  }
+
   return jwt.sign(
     { userId, role },
-    process.env.JWT_SECRET!,
+    process.env.JWT_SECRET,
     { expiresIn: '1d' }
   )
 }
@@ -56,29 +50,19 @@ export const generateToken = (userId: string, role: string) => {
  * @param userData - User registration data
  * @returns Created user data without password, null if email exists
  */
-export const createUser = async (userData: { 
-  email: string, 
-  password: string, 
-  firstName: string, 
-  lastName: string 
-}) => {
-  const existingUser = await prisma.user.findUnique({
-    where: { email: userData.email },
-  })
+export const createUser = async (userData: CreateUserData) => {
+  const existingUser = await UserRepository.findByEmail(userData.email)
 
   if (existingUser) {
-    return null
+    throw AppError.badRequest('Email already exists', ERROR_CODES.USER_EXISTS)
   }
 
   const hashedPassword = await bcrypt.hash(userData.password, 10)
 
-  const user = await prisma.user.create({
-    data: {
-      ...userData,
-      password: hashedPassword,
-    },
+  const user = await UserRepository.create({
+    ...userData,
+    password: hashedPassword,
   })
 
-  const { password: _, ...userWithoutPassword } = user
-  return userWithoutPassword
+  return user
 } 
