@@ -5,6 +5,11 @@ import { loginResponseSchema, registerResponseSchema, errorResponseSchema } from
 
 const authService = new AuthService()
 
+/**
+ * Handles user login request
+ * @param req - Express request
+ * @param res - Express response
+ */
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body
@@ -43,6 +48,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
+/**
+ * Handles user registration request
+ * @param req - Express request
+ * @param res - Express response
+ */
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password, firstName, lastName } = req.body

@@ -12,6 +12,11 @@ type SendResponseOptions<T> = {
   schema?: z.ZodType
 }
 
+/**
+ * Sends a standardized API response with schema validation
+ * @param options - Response configuration options
+ * @returns Express response object
+ */
 export function sendResponse<T>({
   res,
   statusCode = 200,
@@ -20,7 +25,7 @@ export function sendResponse<T>({
   data = null,
   errors = null,
   schema = baseResponseSchema
-}: SendResponseOptions<T>) {
+}: SendResponseOptions<T>): Response {
   const response = {
     success,
     message,
