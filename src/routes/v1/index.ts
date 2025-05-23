@@ -10,7 +10,7 @@ router.use('/auth', authLimiter, authRoutes)
 router.use('/users', userRoutes)
 
 // Health check endpoint
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({ status: 'ok', version: 'v1' })
 })
 
