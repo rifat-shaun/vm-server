@@ -6,7 +6,7 @@ const userSchema = z.object({
   email: z.string().email(),
   firstName: z.string(),
   lastName: z.string(),
-  role: z.string()
+  role: z.string(),
 })
 
 const authDataSchema = z.object({
