@@ -25,10 +25,11 @@ const env = validateEnv()
 export const config = {
   env: env.NODE_ENV,
   server: {
-    port: parseInt(env.PORT, 10),
-    isDev: env.NODE_ENV === 'development',
-    isProd: env.NODE_ENV === 'production',
-    isTest: env.NODE_ENV === 'test'
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    isDev: process.env.NODE_ENV === 'development',
+    isProd: process.env.NODE_ENV === 'production',
+    isTest: process.env.NODE_ENV === 'test',
+    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000']
   },
   auth: {
     jwt: {
