@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { AuthService } from '../services/auth.service'
+import { sendResponse } from '../utils/sendResponse'
+import { loginResponseSchema, registerResponseSchema, errorResponseSchema } from '../response-schema'
 
 const authService = new AuthService()
 
@@ -10,28 +12,33 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user = await authService.validateUser(email, password)
 
     if (!user) {
-      res.status(401).json({
+      sendResponse({
+        res,
+        statusCode: 401,
         success: false,
         message: 'Invalid credentials',
+        schema: errorResponseSchema
       })
       return
     }
 
     const token = authService.generateToken(user.id, user.role)
 
-    res.status(200).json({
+    sendResponse({
+      res,
       success: true,
       message: 'Login successful',
-      data: {
-        token,
-        user
-      },
+      data: { token, user },
+      schema: loginResponseSchema
     })
   } catch (error) {
-    console.error('Login error:', error)
-    res.status(500).json({
+    sendResponse({
+      res,
+      statusCode: 500,
       success: false,
       message: 'Internal server error',
+      errors: error,
+      schema: errorResponseSchema
     })
   }
 }
@@ -48,28 +55,34 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     })
 
     if (!user) {
-      res.status(400).json({
+      sendResponse({
+        res,
+        statusCode: 400,
         success: false,
         message: 'Email already exists',
+        schema: errorResponseSchema
       })
       return
     }
 
     const token = authService.generateToken(user.id, user.role)
 
-    res.status(201).json({
+    sendResponse({
+      res,
+      statusCode: 201,
       success: true,
       message: 'Registration successful',
-      data: {
-        token,
-        user,
-      },
+      data: { token, user },
+      schema: registerResponseSchema
     })
   } catch (error) {
-    console.error(error)
-    res.status(500).json({
+    sendResponse({
+      res,
+      statusCode: 500,
       success: false,
       message: 'Internal server error',
+      errors: error,
+      schema: errorResponseSchema
     })
   }
 } 
