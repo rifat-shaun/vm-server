@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
-import { AuthService } from '../services/auth.service'
+import * as authService from '../services/auth.service'
 import { sendResponse } from '../utils/sendResponse'
 import { loginResponseSchema, registerResponseSchema, errorResponseSchema } from '../response-schema'
-
-const authService = new AuthService()
 
 /**
  * Handles user login request
