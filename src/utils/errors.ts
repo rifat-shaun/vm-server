@@ -3,12 +3,15 @@ export const ERROR_CODES = {
   INVALID_CREDENTIALS: 'AUTH001',
   USER_EXISTS: 'AUTH002',
   INVALID_TOKEN: 'AUTH003',
-  
+
   // Validation errors
   VALIDATION_ERROR: 'VAL001',
-  
+
   // Server errors
-  INTERNAL_SERVER_ERROR: 'SRV001'
+  INTERNAL_SERVER_ERROR: 'SRV001',
+
+  // API errors
+  RATE_LIMIT_EXCEEDED: 'API001'
 } as const
 
 export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES]
