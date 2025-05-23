@@ -1,1 +1,11 @@
- 
+#!/usr/bin/env bash
+
+# Run lint-staged (includes ESLint with --max-warnings=0)
+npx lint-staged || exit 1
+
+# Only run tests if there are staged changes
+if git diff --staged --quiet; then
+  exit 0
+else
+  npm run test:ci || exit 1
+fi 
