@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
+
 import { UserRepository, CreateUserData } from '@/repositories/user.repository'
 import { AppError, ERROR_CODES } from '@/utils/errors'
-import { LoginRequestDto } from '@/dtos/auth.dto'
+import { LoginRequestDto } from '@/validations/auth.validation'
 
 /**
  * Validates user credentials and returns user data without password

@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+import { serve, setup } from 'swagger-ui-express';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -20,12 +20,6 @@ const options: swaggerJsdoc.Options = {
         description: 'Local Development Server'
       }
     ],
-    tags: [
-      {
-        name: 'Auth',
-        description: 'Authentication endpoints'
-      }
-    ],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -39,14 +33,14 @@ const options: swaggerJsdoc.Options = {
       bearerAuth: []
     }]
   },
-  apis: ['./src/**/*.ts']  // This will include all TypeScript files in src directory
+  apis: ['./src/docs/swagger/*.yaml']  // Updated to use YAML files
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 export function setupSwagger(app: Express) {
   // Swagger UI setup
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  app.use('/api-docs', serve, setup(swaggerSpec, {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'My API Documentation'

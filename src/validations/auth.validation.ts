@@ -19,4 +19,7 @@ export const registerValidation = z.object({
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
   }),
-}) 
+})
+
+export type LoginRequestDto = z.infer<typeof loginValidation>['body']
+export type RegisterRequestDto = z.infer<typeof registerValidation>['body']

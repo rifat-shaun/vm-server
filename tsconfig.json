@@ -28,6 +28,6 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "jest.config.js", "*.config.js", "dist"],
   "include": ["./src/**/*.ts"]
 }

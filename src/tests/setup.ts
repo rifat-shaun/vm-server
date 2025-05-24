@@ -1,6 +1,6 @@
-import { PrismaClient } from '../../generated/prisma'
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended'
-import { config } from '@/config'
+
+import { PrismaClient } from '../../generated/prisma'
 
 // Mock Prisma
 export const prismaMock = mockDeep<PrismaClient>()
@@ -8,11 +8,23 @@ export const prismaMock = mockDeep<PrismaClient>()
 // Mock config
 jest.mock('@/config', () => ({
   config: {
-    ...config,
     env: 'test',
     server: {
-      ...config.server,
-      isTest: true
+      isTest: true,
+      port: 3000,
+      host: 'localhost'
+    },
+    auth: {
+      jwt: {
+        secret: 'test-secret',
+        expiresIn: '1d'
+      }
+    },
+    api: {
+      rateLimiting: {
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100 // limit each IP to 100 requests per windowMs
+      }
     }
   }
 }))
