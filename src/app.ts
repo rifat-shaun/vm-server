@@ -1,9 +1,10 @@
-import express from 'express';
 import cors from 'cors';
-import { setupSwagger } from './docs';
+import express from 'express';
+
+import { setupSwagger } from './config/swagger';
+import { securityMiddleware } from './middleware/security';
 import { errorHandler } from './middlewares/errorHandler';
 import v1Routes from './routes/v1';
-import { securityMiddleware } from './middleware/security';
 
 const app = express();
 

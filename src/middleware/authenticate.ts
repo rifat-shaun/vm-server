@@ -1,14 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+
 import { config } from '@/config'
-import { AppError, ERROR_CODES } from '@/utils/errors'
 import { AUTH_MESSAGES } from '@/constants/auth'
+import { AppError, ERROR_CODES } from '@/utils/errors'
 
 interface AuthRequest extends Request {
   user?: jwt.JwtPayload | string
 }
 
-export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (req: AuthRequest, _res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {

@@ -1,23 +1,19 @@
 import { Request, Response } from 'express'
-import { PrismaClient } from '../../generated/prisma'
+
 import { sendResponse } from '@/utils/sendResponse'
+
+import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()
 
 /**
- * @swagger
- * /health:
- *   get:
- *     tags: [Health]
- *     summary: Check service health
- *     description: Check the health of the service and its dependencies
- *     responses:
- *       200:
- *         description: Service is healthy
- *       503:
- *         description: Service is unhealthy
+ * Check service health
+ * @route GET /health
+ * @description Check the health of the service and its dependencies
+ * @returns {Object} 200 - Service is healthy
+ * @returns {Object} 503 - Service is unhealthy
  */
-export const healthCheck = async (req: Request, res: Response) => {
+export const healthCheck = async (_req: Request, res: Response) => {
   try {
     // Check database connection
     await prisma.$queryRaw`SELECT 1`
@@ -34,7 +30,7 @@ export const healthCheck = async (req: Request, res: Response) => {
         }
       }
     })
-  } catch (error) {
+  } catch {
     sendResponse({
       res,
       statusCode: 503,

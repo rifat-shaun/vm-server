@@ -1,15 +1,29 @@
+import { Request, Response } from 'express'
 import rateLimit from 'express-rate-limit'
+
 import { config } from '@/config'
-import { AppError, ERROR_CODES } from '@/utils/errors'
 
 export const authLimiter = rateLimit({
   windowMs: config.api.rateLimiting.windowMs,
   max: config.api.rateLimiting.max,
-  handler: (req, res) => {
-    throw new AppError(
-      429,
-      'Too many requests, please try again later',
-      ERROR_CODES.RATE_LIMIT_EXCEEDED
-    )
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      message: 'Too many requests from this IP, please try again later.',
+      data: null
+    })
+  }
+})
+
+export const rateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      message: 'Too many requests from this IP, please try again later.',
+      data: null
+    })
   }
 }) 
