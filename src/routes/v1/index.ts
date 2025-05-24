@@ -1,7 +1,9 @@
 import { Router } from 'express'
+
+import { authLimiter } from '@/middlewares/rateLimiter.ts'
+
 import authRoutes from './auth.routes.ts'
 import userRoutes from './user.routes.ts'
-import { authLimiter } from '@/middleware/rateLimiter'
 
 const router = Router()
 

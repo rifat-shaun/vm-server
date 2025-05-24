@@ -1,5 +1,6 @@
-import helmet from 'helmet'
 import cors from 'cors'
+import helmet from 'helmet'
+
 import { config } from '@/config'
 
 export const securityMiddleware = [

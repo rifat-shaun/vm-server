@@ -1,4 +1,4 @@
-import { LoginRequestDto, RegisterRequestDto } from '@/dtos/auth.dto'
+import { LoginRequestDto, RegisterRequestDto } from '@/validations/auth.validation'
 
 export interface User {
   id: string

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import rateLimit from 'express-rate-limit'
+import { rateLimit } from 'express-rate-limit'
 
 import { config } from '@/config'
 

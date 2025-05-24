@@ -1,9 +1,9 @@
 import cors from 'cors';
-import express from 'express';
+import express, { json, urlencoded } from 'express';
 
 import { setupSwagger } from './config/swagger';
-import { securityMiddleware } from './middleware/security';
 import { errorHandler } from './middlewares/errorHandler';
+import { securityMiddleware } from './middlewares/security';
 import v1Routes from './routes/v1';
 
 const app = express();
@@ -20,8 +20,8 @@ app.use(cors({
 app.use(securityMiddleware);
 
 // Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
 setupSwagger(app);
 app.use('/api/v1', v1Routes);
