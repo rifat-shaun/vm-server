@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import { Schema } from 'zod'
+import { Schema, ZodError } from 'zod'
 
-import { AppError } from '@/utils/errors'
+import { AppError, ERROR_CODES } from '@/utils/errors'
 
 export const validateRequest = (schema: Schema) => {
   return async (req: Request, _res: Response, next: NextFunction) => {
@@ -11,9 +11,13 @@ export const validateRequest = (schema: Schema) => {
         query: req.query,
         params: req.params
       })
-      next()
+      return next()
     } catch (error) {
-      next(new AppError(400, 'Validation failed', error))
+      if (error instanceof ZodError) {
+        return next(error)
+      }
+      
+      return next(new AppError(500, 'Unexpected validation error', ERROR_CODES.INTERNAL_SERVER_ERROR))
     }
   }
 } 
