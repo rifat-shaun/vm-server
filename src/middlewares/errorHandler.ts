@@ -17,18 +17,18 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 
   // Handle Zod validation errors directly
   if (err instanceof ZodError) {
+    const validationErrors = err.errors.map((e) => ({
+      field: e.path.join('.'),
+      message: e.message,
+      code: e.code
+    }))
+
     res.status(400).json({
       success: false,
       message: 'Validation Error',
       code: 'VAL001',
-      errors: {
-        errors: err.errors.map((e) => ({
-          field: e.path.join('.'),
-          message: e.message,
-          code: e.code
-        })),
-        errorCount: err.errors.length
-      }
+      errors: validationErrors,
+      errorCount: validationErrors.length
     })
     return
   }
