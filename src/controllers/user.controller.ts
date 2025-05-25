@@ -1,5 +1,6 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 
+import { IAuthenticatedRequest } from '@/interfaces/user.interface'
 import { errorResponseSchema } from '@/response-schema'
 import { profileResponseSchema } from '@/response-schema/user.schema'
 import * as userService from '@/services/user.service'
@@ -11,7 +12,7 @@ import { sendResponse } from '@/utils/sendResponse'
  * @param req - Express request
  * @param res - Express response
  */
-export const getUserDetails = async (req: Request, res: Response) : Promise<void> => {
+export const getUserDetails = async (req: IAuthenticatedRequest, res: Response) : Promise<void> => {
 	try {
 		if (!req.params.userId) {
 			throw new AppError(401, 'Unauthorized', ERROR_CODES.INVALID_TOKEN)

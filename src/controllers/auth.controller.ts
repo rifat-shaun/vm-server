@@ -13,7 +13,7 @@ import { sendResponse } from '@/utils/sendResponse'
 export const login = async (req: Request, res: Response) => {
   try {
     const user = await authService.validateUser(req.body)
-    const token = authService.generateToken(user.id, user.role)
+    const token = authService.generateToken(user.id, user.role, user.email)
 
     sendResponse({
       res,
@@ -53,7 +53,7 @@ export const login = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
   try {
     const user = await authService.createUser(req.body)
-    const token = authService.generateToken(user.id, user.role)
+    const token = authService.generateToken(user.id, user.role, user.email)
 
     sendResponse({
       res,

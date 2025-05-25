@@ -32,15 +32,16 @@ export const validateUser = async ({ email, password }: LoginRequestDto) => {
  * Generates a JWT token for authenticated user
  * @param userId - User's unique identifier
  * @param role - User's role
+ * @param email - User's email
  * @returns JWT token
  */
-export const generateToken = (userId: string, role: string): string => {
+export const generateToken = (userId: string, role: string, email: string): string => {
   if (!process.env.JWT_SECRET) {
     throw AppError.internal('JWT secret not configured')
   }
 
   return jwt.sign(
-    { userId, role },
+    { userId, role, email },
     process.env.JWT_SECRET,
     { expiresIn: '1d' }
   )
