@@ -6,25 +6,18 @@ import * as userService from '@/services/user.service'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 import { sendResponse } from '@/utils/sendResponse'
 
-interface AuthRequest extends Request {
-	user?: {
-		userId?: string
-		email?: string
-	}
-}
-
 /**
  * Get user profile
  * @param req - Express request
  * @param res - Express response
  */
-export const getProfile = async (req: AuthRequest, res: Response) : Promise<void> => {
+export const getUserDetails = async (req: Request, res: Response) : Promise<void> => {
 	try {
-		if (!req.user?.userId) {
+		if (!req.params.userId) {
 			throw new AppError(401, 'Unauthorized', ERROR_CODES.INVALID_TOKEN)
 		}
 
-		const profile = await userService.getProfile(req.user.userId)
+		const profile = await userService.getUserDetails(req.params.userId)
 
 		sendResponse({
 			res,

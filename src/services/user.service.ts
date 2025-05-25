@@ -6,7 +6,7 @@ import { AppError, ERROR_CODES } from '@/utils/errors'
  * @param userId - User's unique identifier
  * @returns User profile data
  */
-export const getProfile = async (userId: string) => {
+export const getUserDetails = async (userId: string) => {
   const user = await UserRepository.findById(userId)
 
   if (!user) {
