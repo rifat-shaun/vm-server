@@ -44,5 +44,18 @@ export const UserRepository = {
         role: true
       }
     })
+  },
+
+  findById: async (id: string, select?: Partial<UserSelect>) => {
+    return prisma.user.findUnique({
+      where: { id },
+      select: select || {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true
+      }
+    })
   }
 } 
