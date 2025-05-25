@@ -5,11 +5,7 @@ import { config } from '@/config'
 import { AUTH_MESSAGES } from '@/constants/auth'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 
-interface AuthRequest extends Request {
-  user?: JwtPayload | string
-}
-
-export const authenticate = async (req: AuthRequest, _res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {
@@ -17,7 +13,8 @@ export const authenticate = async (req: AuthRequest, _res: Response, next: NextF
     }
 
     const decoded = verify(token, config.auth.jwt.secret)
-    req.user = decoded
+
+    req.params.userId = (decoded as JwtPayload).userId
     next()
   } catch (error) {
     if (error instanceof TokenExpiredError) {

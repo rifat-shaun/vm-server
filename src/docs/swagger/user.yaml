@@ -54,16 +54,24 @@ components:
               type: object
 
 paths:
-  /api/users/profile:
+  /api/v1/users/{userId}:
     get:
-      summary: Get user profile
-      description: Retrieves the profile information of the authenticated user. Requires a valid authentication token.
+      summary: Get user details by ID
+      description: Retrieves the profile information of a specific user by their ID. Requires authentication.
       tags: [Users]
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the user
       responses:
         200:
-          description: User profile retrieved successfully
+          description: User details retrieved successfully
           content:
             application/json:
               schema:
@@ -89,7 +97,7 @@ paths:
                 success: false
                 message: "User not found"
                 errors:
-                  code: "VALIDATION_ERROR"
+                  code: "USER_NOT_FOUND"
         500:
           description: Internal server error
           content:

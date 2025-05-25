@@ -5,6 +5,6 @@ import { authenticate } from '@/middlewares/authenticate'
 
 const router = Router()
 
-router.get('/users/:userId', authenticate, getUserDetails)
+router.get('/:userId', authenticate, getUserDetails)
 
 export default router
