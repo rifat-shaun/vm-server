@@ -1,3 +1,4 @@
+import { IUser } from '@/interfaces/auth.interface'
 import { UserRepository } from '@/repositories/user.repository'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 
@@ -15,4 +16,23 @@ export const getUserDetails = async (userId: string) => {
 
   const { password: _, ...userWithoutPassword } = user
   return userWithoutPassword
+}
+
+/**
+ * Update user details by ID
+ * @param userId - User's unique identifier
+ * @param userData - User data to update
+ * @returns Updated user data
+ */
+export const updateUserDetails = async (userId: string, userData: IUser) => {
+  const user = await UserRepository.findById(userId)
+  
+  if (!user) {
+    throw new AppError(404, 'User not found', ERROR_CODES.VALIDATION_ERROR)
+  }
+
+  const updatedUser = await UserRepository.update(userId, userData)
+
+  return updatedUser
+
 }

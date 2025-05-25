@@ -1,7 +1,8 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
-import { UserRepository, CreateUserData } from '@/repositories/user.repository'
+import { UserRepository } from '@/repositories/user.repository'
+import { TCreateUserData } from '@/types/user'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 import { LoginRequestDto } from '@/validations/auth.validation'
 
@@ -52,7 +53,7 @@ export const generateToken = (userId: string, role: string, email: string): stri
  * @param userData - User registration data
  * @returns Created user data without password, null if email exists
  */
-export const createUser = async (userData: CreateUserData) => {
+export const createUser = async (userData: TCreateUserData) => {
   const existingUser = await UserRepository.findByEmail(userData.email)
 
   if (existingUser) {

@@ -49,3 +49,46 @@ export const getUserDetails = async (req: IAuthenticatedRequest, res: Response) 
 		}
 	}
 }
+
+/**
+ * Update user details
+ * @param req - Express request
+ * @param res - Express response
+ */
+export const updateUserDetails = async (req: IAuthenticatedRequest, res: Response) : Promise<void> => {
+	try {
+		if (!req.params.userId) {
+			throw new AppError(401, 'Unauthorized', ERROR_CODES.INVALID_TOKEN)
+		}
+
+		const updatedUser = await userService.updateUserDetails(req.params.userId, req.body)
+
+		sendResponse({
+			res,
+			success: true,
+			message: 'User details updated successfully',
+			data: updatedUser,	
+			schema: profileResponseSchema
+		})
+	} catch (error) {
+		if (error instanceof AppError) {
+			sendResponse({
+				res,
+				statusCode: error.statusCode,
+				success: false,
+				message: error.message,	
+				errors: { code: error.code, details: error.details },
+				schema: errorResponseSchema
+			})
+		} else {
+			sendResponse({
+				res,
+				statusCode: 500,
+				success: false,
+				message: 'Internal server error',	
+				errors: error,
+				schema: errorResponseSchema
+			})
+		}
+	}
+}
