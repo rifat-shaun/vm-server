@@ -1,8 +1,7 @@
 import { Response } from 'express'
 
 import { IAuthenticatedRequest } from '@/interfaces/user.interface'
-import { errorResponseSchema } from '@/response-schema'
-import { profileResponseSchema } from '@/response-schema/user.schema'
+import { errorResponseSchema , userDetailsResponseSchema } from '@/response-schema'
 import * as userService from '@/services/user.service'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 import { sendResponse } from '@/utils/sendResponse'
@@ -25,7 +24,7 @@ export const getUserDetails = async (req: IAuthenticatedRequest, res: Response) 
 			success: true,
 			message: 'Profile retrieved successfully',
 			data: profile,
-			schema: profileResponseSchema
+			schema: userDetailsResponseSchema
 		})
 	} catch (error) {
 		if (error instanceof AppError) {
@@ -68,7 +67,7 @@ export const updateUserDetails = async (req: IAuthenticatedRequest, res: Respons
 			success: true,
 			message: 'User details updated successfully',
 			data: updatedUser,	
-			schema: profileResponseSchema
+			schema: userDetailsResponseSchema
 		})
 	} catch (error) {
 		if (error instanceof AppError) {

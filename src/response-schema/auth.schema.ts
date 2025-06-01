@@ -27,7 +27,6 @@ export const forgotPasswordResponseSchema = baseResponseSchema.extend({
 
 export const registerResponseSchema = loginResponseSchema
 
-// export type LoginResponse = z.infer<typeof loginResponseSchema>
-// export type RegisterResponse = z.infer<typeof registerResponseSchema>
-// export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
-// export type UserSchema = z.infer<typeof userSchema> 
+export type LoginResponse = z.infer<typeof loginResponseSchema>
+export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
+export type RegisterResponse = z.infer<typeof registerResponseSchema>
