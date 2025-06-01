@@ -1,52 +1,56 @@
-import { IUserSignupInfo, IUserUpdateInfo , IUserDetails } from '@/interfaces'
+import { IUserSignupInfo, IUserUpdateInfo } from '@/interfaces'
 
 import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()
 
-const defaultSelect: Record<keyof IUserDetails, boolean> = {
+const defaultSelect = {
   id: true,
   email: true,
   password: false, // password is not returned by default as it is sensitive data
   firstName: true,
   lastName: true,
   role: true
+} as const
+
+type UserSelect = {
+  [K in keyof typeof defaultSelect]: boolean
 }
 
 export const UserRepository = {
-  create: async (data: IUserSignupInfo, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails> => {
+  create: async (data: IUserSignupInfo, select?: Partial<UserSelect>) => {
     return prisma.user.create({
       data,
-      select: select || defaultSelect
+      select: { ...defaultSelect, ...select }
     })
   },
 
-  update: async (userId: string, userData: IUserUpdateInfo, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+  update: async (userId: string, userData: IUserUpdateInfo, select?: Partial<UserSelect>) => {
     return prisma.user.update({
       where: { id: userId },
       data: userData,
-      select: select || defaultSelect
+      select: { ...defaultSelect, ...select }
     })
   },
 
-  delete: async (userId: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+  delete: async (userId: string, select?: Partial<UserSelect>) => {
     return prisma.user.delete({
       where: { id: userId },
-      select: select || defaultSelect
+      select: { ...defaultSelect, ...select }
     })
   },
 
-  findById: async (userId: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+  findById: async (userId: string, select?: Partial<UserSelect>) => {
     return prisma.user.findUnique({
       where: { id: userId },
-      select: select || defaultSelect
+      select: { ...defaultSelect, ...select }
     })
   },
 
-  findByEmail: async (email: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+  findByEmail: async (email: string, select?: Partial<UserSelect>) => {
     return prisma.user.findUnique({
       where: { email },
-      select: select || defaultSelect
+      select: { ...defaultSelect, ...select }
     })
   }
 } 

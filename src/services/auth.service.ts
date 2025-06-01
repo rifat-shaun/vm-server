@@ -13,8 +13,8 @@ import { generateOTP, storeOTP } from '@/utils/otp'
  * @param password - User's password
  * @returns User data if valid, null if invalid
  */
-export const validateUser = async ({ email, password }: IUserCredentials) => {
-  const user = await UserRepository.findByEmail(email)
+export const validateUser = async ({ email, password }: IUserCredentials): Promise<Omit<IUserDetails, 'password'>> => {
+  const user = await UserRepository.findByEmail(email, { password: true })
 
   if (!user) {
     throw AppError.unauthorized('Invalid credentials')
@@ -87,6 +87,5 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
   storeOTP(email, otp)
   await sendOTPEmail(email, otp)
 
-  const { password: _, ...userWithoutPassword } = user
-  return userWithoutPassword
+  return user
 }

@@ -46,7 +46,7 @@ describe('Auth Service', () => {
         lastName: mockUser.lastName,
         role: mockUser.role
       })
-      expect(UserRepository.findByEmail).toHaveBeenCalledWith(mockCredentials.email)
+      expect(UserRepository.findByEmail).toHaveBeenCalledWith(mockCredentials.email, { password: true })
       expect(bcrypt.compare).toHaveBeenCalledWith(mockCredentials.password, mockUser.password)
     })
 
