@@ -1,4 +1,4 @@
-import { IUser } from '@/interfaces/auth.interface'
+import { IUserUpdateInfo } from '@/interfaces'
 import { UserRepository } from '@/repositories/user.repository'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 
@@ -24,9 +24,9 @@ export const getUserDetails = async (userId: string) => {
  * @param userData - User data to update
  * @returns Updated user data
  */
-export const updateUserDetails = async (userId: string, userData: IUser) => {
+export const updateUserDetails = async (userId: string, userData: IUserUpdateInfo) => {
   const user = await UserRepository.findById(userId)
-  
+
   if (!user) {
     throw new AppError(404, 'User not found', ERROR_CODES.VALIDATION_ERROR)
   }

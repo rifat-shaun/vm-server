@@ -1,61 +1,52 @@
-import { TCreateUserData, TUserSelect, TUpdateUserData } from '@/types/user'
+import { IUserSignupInfo, IUserUpdateInfo , IUserDetails } from '@/interfaces'
 
 import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()
 
-export const UserRepository = {
-  findByEmail: async (email: string, select?: Partial<TUserSelect>) => {
-    return prisma.user.findUnique({
-      where: { email },
-      select: select || {
-        id: true,
-        email: true,
-        password: true,
-        firstName: true,
-        lastName: true,
-        role: true
-      }
-    })
-  },
+const defaultSelect: Record<keyof IUserDetails, boolean> = {
+  id: true,
+  email: true,
+  password: false, // password is not returned by default as it is sensitive data
+  firstName: true,
+  lastName: true,
+  role: true
+}
 
-  create: async (data: TCreateUserData) => {
+export const UserRepository = {
+  create: async (data: IUserSignupInfo, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails> => {
     return prisma.user.create({
       data,
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true
-      }
+      select: select || defaultSelect
     })
   },
 
-  findById: async (id: string, select?: Partial<TUserSelect>) => {
-    return prisma.user.findUnique({
-      where: { id },
-      select: select || {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true
-      }
-    })
-  },
-
-  update: async (userId: string, userData: TUpdateUserData, select?: Partial<TUserSelect>) => {
+  update: async (userId: string, userData: IUserUpdateInfo, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
     return prisma.user.update({
       where: { id: userId },
       data: userData,
-      select: select || {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true
-      }
+      select: select || defaultSelect
+    })
+  },
+
+  delete: async (userId: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+    return prisma.user.delete({
+      where: { id: userId },
+      select: select || defaultSelect
+    })
+  },
+
+  findById: async (userId: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: select || defaultSelect
+    })
+  },
+
+  findByEmail: async (email: string, select?: Record<keyof IUserDetails, boolean>): Promise<IUserDetails | null> => {
+    return prisma.user.findUnique({
+      where: { email },
+      select: select || defaultSelect
     })
   }
 } 

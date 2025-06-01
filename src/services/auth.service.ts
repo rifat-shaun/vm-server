@@ -1,12 +1,11 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
+import { IUserCredentials, IUserDetails, IUserSignupInfo } from '@/interfaces'
 import { UserRepository } from '@/repositories/user.repository'
 import { sendOTPEmail } from '@/services/email.service'
-import { TCreateUserData } from '@/types/user'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 import { generateOTP, storeOTP } from '@/utils/otp'
-import { LoginRequestDto } from '@/validations/auth.validation'
 
 /**
  * Validates user credentials and returns user data without password
@@ -14,7 +13,7 @@ import { LoginRequestDto } from '@/validations/auth.validation'
  * @param password - User's password
  * @returns User data if valid, null if invalid
  */
-export const validateUser = async ({ email, password }: LoginRequestDto) => {
+export const validateUser = async ({ email, password }: IUserCredentials) => {
   const user = await UserRepository.findByEmail(email)
 
   if (!user) {
@@ -55,7 +54,7 @@ export const generateToken = (userId: string, role: string, email: string): stri
  * @param userData - User registration data
  * @returns Created user data without password, null if email exists
  */
-export const createUser = async (userData: TCreateUserData) => {
+export const createUser = async (userData: IUserSignupInfo): Promise<Omit<IUserDetails, 'password'>> => {
   const existingUser = await UserRepository.findByEmail(userData.email)
 
   if (existingUser) {
@@ -77,7 +76,7 @@ export const createUser = async (userData: TCreateUserData) => {
  * @param email - User's email address
  * @returns User data without password
  */
-export const forgotPassword = async (email: string) => {
+export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 'password'>> => {
   const user = await UserRepository.findByEmail(email)
 
   if (!user) {
