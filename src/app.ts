@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
 
-import { setupSwagger } from './config/swagger';
+import { setupSwagger } from './docs/swagger';
 import { errorHandler } from './middlewares/errorHandler';
 import { securityMiddleware } from './middlewares/security';
 import v1Routes from './routes/v1';
@@ -16,14 +16,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Apply security middleware
-app.use(securityMiddleware);
-
-// Body parsing middleware
+// Middleware
 app.use(json());
 app.use(urlencoded({ extended: true }));
+app.use(securityMiddleware);
 
+// API Documentation
 setupSwagger(app);
+
+// Routes
 app.use('/api/v1', v1Routes);
 
 // Error handling

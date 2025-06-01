@@ -5,9 +5,9 @@ import { Express } from 'express'
 import { serve, setup } from 'swagger-ui-express'
 
 // Read and parse the JSON files
-const commonSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger/common.json'), 'utf8'))
-const authSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger/auth.json'), 'utf8'))
-const userSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger/user.json'), 'utf8'))
+const authSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'auth.json'), 'utf8'))
+const userSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'user.json'), 'utf8'))
+const commonSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'common.json'), 'utf8'))
 
 // Merge the specifications
 const specs = {
@@ -28,19 +28,24 @@ const specs = {
     ...userSpec.tags
   ],
   paths: {
-    ...authSpec.paths,
-    ...userSpec.paths
+    ...(authSpec.paths || {}),
+    ...(userSpec.paths || {})
   },
   components: {
-    schemas: {
-      ...commonSpec.components.schemas,
-      ...authSpec.components?.schemas,
-      ...userSpec.components?.schemas
-    },
     securitySchemes: commonSpec.components.securitySchemes
   }
 }
 
 export const setupSwagger = (app: Express) => {
-  app.use('/api-docs', serve, setup(specs))
+  app.use('/api-docs', serve, setup(specs, {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'API Documentation'
+  }))
+
+  // Serve swagger spec as JSON
+  app.get('/api-docs.json', (_req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    res.send(specs)
+  })
 }
