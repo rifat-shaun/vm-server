@@ -2,8 +2,10 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
 import { UserRepository } from '@/repositories/user.repository'
+import { sendOTPEmail } from '@/services/email.service'
 import { TCreateUserData } from '@/types/user'
 import { AppError, ERROR_CODES } from '@/utils/errors'
+import { generateOTP, storeOTP } from '@/utils/otp'
 import { LoginRequestDto } from '@/validations/auth.validation'
 
 /**
@@ -68,4 +70,24 @@ export const createUser = async (userData: TCreateUserData) => {
   })
 
   return user
-} 
+}
+
+/**
+ * Handles forgot password request by generating and sending OTP
+ * @param email - User's email address
+ * @returns User data without password
+ */
+export const forgotPassword = async (email: string) => {
+  const user = await UserRepository.findByEmail(email)
+
+  if (!user) {
+    throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND)
+  }
+
+  const otp = generateOTP()
+  storeOTP(email, otp)
+  await sendOTPEmail(email, otp)
+
+  const { password: _, ...userWithoutPassword } = user
+  return userWithoutPassword
+}
