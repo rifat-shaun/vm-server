@@ -30,7 +30,7 @@ export const config = {
     isDev: process.env.NODE_ENV === 'development',
     isProd: process.env.NODE_ENV === 'production',
     isTest: process.env.NODE_ENV === 'test',
-    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000']
+    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173']
   },
   auth: {
     jwt: {

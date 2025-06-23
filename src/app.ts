@@ -1,14 +1,19 @@
+import cors from 'cors';
 import express, { json, urlencoded } from 'express';
 
 import { setupSwagger } from './docs/swagger';
 import { errorHandler } from './middlewares/errorHandler';
-import { securityMiddleware } from './middlewares/security';
 import v1Routes from './routes/v1';
 
 const app = express();
 
-// Apply security middleware
-app.use(securityMiddleware);
+// Apply CORS middleware
+app.use(cors({
+	origin: ['http://localhost:3000', 'http://localhost:5173'],
+	methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
+	allowedHeaders: ['Content-Type', 'Authorization'],
+	credentials: true,
+}));
 
 // Body parsing middleware
 app.use(json());
