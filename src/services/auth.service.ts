@@ -89,3 +89,34 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
 
   return user
 }
+
+/**
+ * Verifies JWT token and returns user session information
+ * @param token - JWT token to verify
+ * @returns User session data
+ */
+export const verifySession = async (token: string): Promise<Omit<IUserDetails, 'password'>> => {
+  if (!process.env.JWT_SECRET) {
+    throw AppError.internal('JWT secret not configured')
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string; role: string; email: string }
+    
+    const user = await UserRepository.findById(decoded.userId)
+    
+    if (!user) {
+      throw AppError.unauthorized('User not found')
+    }
+
+    return user
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw AppError.unauthorized('Invalid token')
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      throw AppError.unauthorized('Token expired')
+    }
+    throw error
+  }
+}
