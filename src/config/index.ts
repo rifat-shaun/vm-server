@@ -1,10 +1,13 @@
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 import { z } from 'zod'
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().default('3000'),
-  JWT_SECRET: z.string().default(process.env.JWT_SECRET || 'dev_jwt_secret_key_123'),
-  DATABASE_URL: z.string().default(process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/my_app_db')
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+  PORT: z.string(),
+  JWT_SECRET: z.string(),
+  DATABASE_URL: z.string(),
+  CORS_ORIGINS: z.string().optional()
 })
 
 // Validate environment variables
@@ -38,11 +41,11 @@ const env = validateEnv()
 export const config = {
   env: env.NODE_ENV,
   server: {
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
-    isDev: process.env.NODE_ENV === 'development',
-    isProd: process.env.NODE_ENV === 'production',
-    isTest: process.env.NODE_ENV === 'test',
-    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000']
+    port: env.PORT ? parseInt(env.PORT) : 3000,
+    isDev: env.NODE_ENV === 'development',
+    isProd: env.NODE_ENV === 'production',
+    isTest: env.NODE_ENV === 'test',
+    corsOrigins: env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173']
   },
   auth: {
     jwt: {
