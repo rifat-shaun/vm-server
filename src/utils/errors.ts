@@ -3,6 +3,7 @@ export const ERROR_CODES = {
   INVALID_CREDENTIALS: 'AUTH001',
   USER_EXISTS: 'AUTH002',
   INVALID_TOKEN: 'AUTH003',
+  USER_NOT_FOUND: 'AUTH004',
 
   // Validation errors
   VALIDATION_ERROR: 'VAL001',
@@ -21,7 +22,7 @@ export class AppError extends Error {
     public statusCode: number,
     public message: string,
     public code: ErrorCode,
-    public details?: any
+    public details?: unknown
   ) {
     super(message)
     this.name = 'AppError'

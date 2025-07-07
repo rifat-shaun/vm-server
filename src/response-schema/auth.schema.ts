@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { baseResponseSchema } from '@/response-schema/base.schema'
 
 const userSchema = z.object({
@@ -18,8 +19,21 @@ export const loginResponseSchema = baseResponseSchema.extend({
   data: authDataSchema.nullable().optional()
 })
 
+export const forgotPasswordResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    user: userSchema
+  })
+})
+
+export const verifySessionResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    user: userSchema
+  }).nullable().optional()
+})
+
 export const registerResponseSchema = loginResponseSchema
 
 export type LoginResponse = z.infer<typeof loginResponseSchema>
+export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
+export type VerifySessionResponse = z.infer<typeof verifySessionResponseSchema>
 export type RegisterResponse = z.infer<typeof registerResponseSchema>
-export type UserSchema = z.infer<typeof userSchema> 

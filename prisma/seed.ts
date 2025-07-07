@@ -3,25 +3,63 @@ import * as bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
-async function main() {
-  const hashedPassword = await bcrypt.hash('Rif@t123', 10)
-  
-  await prisma.user.upsert({
-    where: { email: 'rifat448@gmail.com' },
+/**
+ * Creates a SUPER ADMIN user
+ * @param email - User email
+ * @param firstName - User first name
+ * @param lastName - User last name
+ * @param password - User password (will be hashed)
+ */
+const createSuperAdmin = async (
+  email: string,
+  firstName: string,
+  lastName: string,
+  password: string
+) => {
+  const hashedPassword = await bcrypt.hash(password, 10)
+
+  return await prisma.user.upsert({
+    where: { email },
     update: {},
     create: {
-      email: 'rifat448@gmail.com',
-      firstName: 'Rifat',
-      lastName: 'Hasan',
+      email,
+      firstName,
+      lastName,
       password: hashedPassword,
       role: Role.SUPER_ADMIN,
     },
   })
 }
 
+async function main() {
+  console.log('🌱 Starting database seeding...')
+
+  // Create SUPER ADMIN users
+  const superAdmins = [
+    {
+      email: 'rifath.shaun@gmail.com',
+      firstName: 'Super',
+      lastName: 'Admin',
+      password: 'Admin@123'
+    },
+  ]
+
+  for (const admin of superAdmins) {
+    const user = await createSuperAdmin(
+      admin.email,
+      admin.firstName,
+      admin.lastName,
+      admin.password
+    )
+    console.log(`✅ Created SUPER ADMIN: ${user.email}`)
+  }
+
+  console.log('🎉 Database seeding completed successfully!')
+}
+
 main()
   .catch((e) => {
-    console.error(e)
+    console.error('❌ Seeding failed:', e)
     process.exit(1)
   })
   .finally(async () => {

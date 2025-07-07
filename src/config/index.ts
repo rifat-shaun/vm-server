@@ -1,27 +1,15 @@
+import './env';
 import { z } from 'zod'
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().default('3000'),
-  JWT_SECRET: z.string().default(process.env.JWT_SECRET || 'dev_jwt_secret_key_123'),
-  DATABASE_URL: z.string().default(process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/my_app_db')
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+  PORT: z.string(),
+  JWT_SECRET: z.string(),
+  DATABASE_URL: z.string()
 })
 
 // Validate environment variables
 const validateEnv = () => {
-  const env = process.env.NODE_ENV || 'development'
-  
-  // Use default values for development
-  if (env === 'development') {
-    return envSchema.parse({
-      NODE_ENV: env,
-      PORT: process.env.PORT || '3000',
-      JWT_SECRET: process.env.JWT_SECRET || 'dev_jwt_secret_key_123',
-      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/my_app_db'
-    })
-  }
-
-  // Require all variables in production
   try {
     return envSchema.parse(process.env)
   } catch (error) {
@@ -42,7 +30,7 @@ export const config = {
     isDev: process.env.NODE_ENV === 'development',
     isProd: process.env.NODE_ENV === 'production',
     isTest: process.env.NODE_ENV === 'test',
-    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000']
+    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173']
   },
   auth: {
     jwt: {

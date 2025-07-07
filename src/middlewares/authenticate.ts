@@ -1,23 +1,26 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { verify, TokenExpiredError, JwtPayload } from 'jsonwebtoken'
 
 import { config } from '@/config'
 import { AUTH_MESSAGES } from '@/constants/auth'
+import { IAuthenticatedRequest } from '@/interfaces/user.interface'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 
-interface AuthRequest extends Request {
-  user?: JwtPayload | string
-}
-
-export const authenticate = async (req: AuthRequest, _res: Response, next: NextFunction) => {
+export const authenticate = (req: IAuthenticatedRequest, _res: Response, next: NextFunction) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new AppError(401, AUTH_MESSAGES.INVALID_TOKEN, ERROR_CODES.INVALID_TOKEN)
     }
 
-    const decoded = verify(token, config.auth.jwt.secret)
-    req.user = decoded
+    const token = authHeader.split(' ')[1]
+    const decoded = verify(token, config.auth.jwt.secret) as JwtPayload
+
+    if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
+      throw new AppError(401, AUTH_MESSAGES.INVALID_TOKEN, ERROR_CODES.INVALID_TOKEN)
+    }
+
+    req.user = { id: decoded.userId, email: decoded.email, role: decoded.role }
     next()
   } catch (error) {
     if (error instanceof TokenExpiredError) {
@@ -26,4 +29,4 @@ export const authenticate = async (req: AuthRequest, _res: Response, next: NextF
       next(new AppError(401, AUTH_MESSAGES.INVALID_TOKEN, ERROR_CODES.INVALID_TOKEN))
     }
   }
-} 
+}

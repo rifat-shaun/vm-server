@@ -46,7 +46,7 @@ describe('Auth Service', () => {
         lastName: mockUser.lastName,
         role: mockUser.role
       })
-      expect(UserRepository.findByEmail).toHaveBeenCalledWith(mockCredentials.email)
+      expect(UserRepository.findByEmail).toHaveBeenCalledWith(mockCredentials.email, { password: true })
       expect(bcrypt.compare).toHaveBeenCalledWith(mockCredentials.password, mockUser.password)
     })
 
@@ -76,6 +76,7 @@ describe('Auth Service', () => {
     const mockUserId = '1'
     const mockRole = Role.USER
     const mockToken = 'generated-token'
+    const mockEmail = 'test@example.com'
 
     beforeEach(() => {
       process.env.JWT_SECRET = 'test-secret'
@@ -86,12 +87,12 @@ describe('Auth Service', () => {
       jest.spyOn(jwt, 'sign').mockImplementation(() => mockToken)
 
       // Act
-      const token = authService.generateToken(mockUserId, mockRole)
+      const token = authService.generateToken(mockUserId, mockRole, mockEmail)
 
       // Assert
       expect(token).toBe(mockToken)
       expect(jwt.sign).toHaveBeenCalledWith(
-        { userId: mockUserId, role: mockRole },
+        { userId: mockUserId, role: mockRole, email: mockEmail },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
       )
@@ -102,7 +103,7 @@ describe('Auth Service', () => {
       delete process.env.JWT_SECRET
 
       // Act & Assert
-      expect(() => authService.generateToken(mockUserId, mockRole))
+      expect(() => authService.generateToken(mockUserId, mockRole, mockEmail))
         .toThrow('JWT secret not configured')
     })
   })
