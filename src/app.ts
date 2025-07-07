@@ -7,6 +7,9 @@ import v1Routes from './routes/v1';
 
 const app = express();
 
+// Trust proxy to handle X-Forwarded-For headers properly
+app.set('trust proxy', 1);
+
 const allowedOrigins = ['http://localhost:5173', process.env.BASE_URL];
 
 app.use(cors({
