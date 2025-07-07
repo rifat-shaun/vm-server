@@ -13,4 +13,4 @@ export const errorResponseSchema = baseResponseSchema.extend({
 })
 
 export type BaseResponse = z.infer<typeof baseResponseSchema>
-export type ErrorResponse = z.infer<typeof errorResponseSchema> 
+export type ErrorResponse = z.infer<typeof errorResponseSchema>

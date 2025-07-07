@@ -1,9 +1,11 @@
 import { Router } from 'express'
 
+import { getUserDetails, updateUserDetails } from '@/controllers/user.controller'
+import { authenticate } from '@/middlewares/authenticate'
+
 const router = Router()
 
-router.get('/profile', (_req, res) => {
-  res.json({ message: 'Profile route - to be implemented' })
-})
+router.get('/:userId', authenticate, getUserDetails)
+router.put('/:userId', authenticate, updateUserDetails)
 
 export default router

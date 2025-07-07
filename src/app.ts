@@ -1,29 +1,38 @@
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
 
-import { setupSwagger } from './config/swagger';
+import { setupSwagger } from './docs/swagger';
 import { errorHandler } from './middlewares/errorHandler';
-import { securityMiddleware } from './middlewares/security';
 import v1Routes from './routes/v1';
 
 const app = express();
 
-// CORS configuration
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5555'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const allowedOrigins = ['http://localhost:5173'];
 
-// Apply security middleware
-app.use(securityMiddleware);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, origin);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With', 'x-origin'],
+  credentials: true,
+}));
 
 // Body parsing middleware
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
+// API Documentation
 setupSwagger(app);
+
+// Routes
 app.use('/api/v1', v1Routes);
 
 // Error handling

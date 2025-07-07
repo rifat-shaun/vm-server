@@ -1,6 +1,6 @@
 import { LoginRequestDto, RegisterRequestDto } from '@/validations/auth.validation'
 
-export interface User {
+export interface IUser {
   id: string
   email: string
   firstName: string
@@ -9,8 +9,8 @@ export interface User {
 }
 
 export interface IAuthService {
-  validateUser(credentials: LoginRequestDto): Promise<User>
-  createUser(userData: RegisterRequestDto): Promise<User>
+  validateUser(credentials: LoginRequestDto): Promise<IUser>
+  createUser(userData: RegisterRequestDto): Promise<IUser>
   generateToken(userId: string, role: string): string
   verifyToken(token: string): Promise<{ userId: string; role: string }>
 } 

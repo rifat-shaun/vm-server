@@ -55,7 +55,7 @@ describe('Auth Controller', () => {
 
       // Assert
       expect(authService.validateUser).toHaveBeenCalledWith(mockCredentials)
-      expect(authService.generateToken).toHaveBeenCalledWith(mockUser.id, mockUser.role)
+      expect(authService.generateToken).toHaveBeenCalledWith(mockUser.id, mockUser.role, mockUser.email)
       expect(sendResponse).toHaveBeenCalledWith({
         res: mockResponse,
         success: true,
@@ -113,7 +113,7 @@ describe('Auth Controller', () => {
 
       // Assert
       expect(authService.createUser).toHaveBeenCalledWith(mockUserData)
-      expect(authService.generateToken).toHaveBeenCalledWith(mockCreatedUser.id, mockCreatedUser.role)
+      expect(authService.generateToken).toHaveBeenCalledWith(mockCreatedUser.id, mockCreatedUser.role, mockCreatedUser.email)
       expect(sendResponse).toHaveBeenCalledWith({
         res: mockResponse,
         statusCode: 201,

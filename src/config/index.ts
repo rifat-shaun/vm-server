@@ -12,19 +12,6 @@ const envSchema = z.object({
 
 // Validate environment variables
 const validateEnv = () => {
-  const env = process.env.NODE_ENV || 'development'
-  
-  // Use default values for development
-  if (env === 'development') {
-    return envSchema.parse({
-      NODE_ENV: env,
-      PORT: process.env.PORT || '3000',
-      JWT_SECRET: process.env.JWT_SECRET || 'dev_jwt_secret_key_123',
-      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/my_app_db'
-    })
-  }
-
-  // Require all variables in production
   try {
     return envSchema.parse(process.env)
   } catch (error) {

@@ -1,16 +1,16 @@
 import { Express } from 'express'
 import request from 'supertest'
 
-import { createServer } from '@/utils/server'
+import app from '@/app'
 
 import { PrismaClient } from '../../../generated/prisma'
 import { prismaMock } from '../setup'
 
 const prisma = new PrismaClient()
-let app: Express
+let testApp: Express
 
 beforeAll(async () => {
-  app = await createServer()
+  testApp = app
 })
 
 // This is for demonstration - not needed with mocks
@@ -46,7 +46,7 @@ describe('Auth Routes', () => {
         updatedAt: new Date()
       })
 
-      const response = await request(app)
+      const response = await request(testApp)
         .post('/api/v1/auth/register')
         .send(mockUser)
         .expect(201)
@@ -66,7 +66,7 @@ describe('Auth Routes', () => {
         lastName: ''
       }
 
-      const response = await request(app)
+      const response = await request(testApp)
         .post('/api/v1/auth/register')
         .send(invalidUser)
         .expect(400)
@@ -100,11 +100,11 @@ describe('Auth Routes', () => {
         updatedAt: new Date()
       })
 
-      await request(app)
+      await request(testApp)
         .post('/api/v1/auth/register')
         .send(mockUser)
 
-      const response = await request(app)
+      const response = await request(testApp)
         .post('/api/v1/auth/login')
         .send(mockCredentials)
         .expect(200)
@@ -123,7 +123,7 @@ describe('Auth Routes', () => {
 
       prismaMock.user.findUnique.mockResolvedValue(null)
 
-      const response = await request(app)
+      const response = await request(testApp)
         .post('/api/v1/auth/login')
         .send(invalidCredentials)
         .expect(401)
@@ -137,7 +137,7 @@ describe('Auth Routes', () => {
         password: ''
       }
 
-      const response = await request(app)
+      const response = await request(testApp)
         .post('/api/v1/auth/login')
         .send(invalidData)
         .expect(400)
