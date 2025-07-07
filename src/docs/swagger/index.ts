@@ -4,6 +4,8 @@ import * as path from 'path'
 import { Express } from 'express'
 import { serve, setup } from 'swagger-ui-express'
 
+import { config } from '../../config'
+
 // Read and parse the JSON files
 const authSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'auth.json'), 'utf8'))
 const userSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'user.json'), 'utf8'))
@@ -19,8 +21,8 @@ const specs = {
   },
   servers: [
     {
-      url: 'http://localhost:3000',
-      description: 'Local server',
+      url: config.server.baseUrl,
+      description: config.server.isProd ? 'Production server' : 'Local server',
     },
   ],
   tags: [

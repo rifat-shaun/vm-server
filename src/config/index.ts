@@ -7,7 +7,8 @@ const envSchema = z.object({
   PORT: z.string(),
   JWT_SECRET: z.string(),
   DATABASE_URL: z.string(),
-  CORS_ORIGINS: z.string().optional()
+  CORS_ORIGINS: z.string().optional(),
+  BASE_URL: z.string().optional()
 })
 
 // Validate environment variables
@@ -32,7 +33,8 @@ export const config = {
     isDev: env.NODE_ENV === 'development',
     isProd: env.NODE_ENV === 'production',
     isTest: env.NODE_ENV === 'test',
-    corsOrigins: env.CORS_ORIGINS?.split(',') || ['*']
+    corsOrigins: env.CORS_ORIGINS?.split(',') || ['*'],
+    baseUrl: env.BASE_URL || `http://localhost:${env.PORT ? parseInt(env.PORT) : 3000}`
   },
   auth: {
     jwt: {
