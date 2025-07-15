@@ -1,9 +1,55 @@
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
 
-import { loginResponseSchema, registerResponseSchema, errorResponseSchema, forgotPasswordResponseSchema, verifySessionResponseSchema } from '@/response-schema'
-import * as authService from '@/services/auth.service'
-import { AppError } from '@/utils/errors'
-import { sendResponse } from '@/utils/sendResponse'
+import {
+  loginResponseSchema,
+  registerResponseSchema,
+  errorResponseSchema,
+  forgotPasswordResponseSchema,
+  verifySessionResponseSchema,
+  checkUserResponseSchema,
+} from '@/response-schema';
+import * as authService from '@/services/auth.service';
+import { AppError } from '@/utils/errors';
+import { sendResponse } from '@/utils/sendResponse';
+
+/**
+ * Handles user check request
+ * @param req - Express request
+ * @param res - Express response
+ */
+export const checkUser = async (req: Request, res: Response) => {
+  try {
+    const user = await authService.getUserByEmailOrMobileNumber(req.body);
+
+    sendResponse({
+      res,
+      success: true,
+      message: user ? 'User exists' : 'User does not exist',
+      data: { isUserExists: !!user, isNewUser: !user?.password },
+      schema: checkUserResponseSchema,
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      sendResponse({
+        res,
+        statusCode: error.statusCode,
+        success: false,
+        message: error.message,
+        errors: { code: error.code, details: error.details },
+        schema: errorResponseSchema,
+      });
+    } else {
+      sendResponse({
+        res,
+        statusCode: 500,
+        success: false,
+        message: 'Internal server error',
+        errors: error,
+        schema: errorResponseSchema,
+      });
+    }
+  }
+};
 
 /**
  * Handles user login request
@@ -12,16 +58,16 @@ import { sendResponse } from '@/utils/sendResponse'
  */
 export const login = async (req: Request, res: Response) => {
   try {
-    const user = await authService.validateUser(req.body)
-    const token = authService.generateToken(user.id, user.role, user.email)
+    const user = await authService.validateUser(req.body);
+    const token = authService.generateToken(user.id, user.role, user.email);
 
     sendResponse({
       res,
       success: true,
       message: 'Login successful',
       data: { token, user },
-      schema: loginResponseSchema
-    })
+      schema: loginResponseSchema,
+    });
   } catch (error) {
     if (error instanceof AppError) {
       sendResponse({
@@ -30,8 +76,8 @@ export const login = async (req: Request, res: Response) => {
         success: false,
         message: error.message,
         errors: { code: error.code, details: error.details },
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     } else {
       sendResponse({
         res,
@@ -39,11 +85,11 @@ export const login = async (req: Request, res: Response) => {
         success: false,
         message: 'Internal server error',
         errors: error,
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     }
   }
-}
+};
 
 /**
  * Handles user registration request
@@ -52,8 +98,8 @@ export const login = async (req: Request, res: Response) => {
  */
 export const register = async (req: Request, res: Response) => {
   try {
-    const user = await authService.createUser(req.body)
-    const token = authService.generateToken(user.id, user.role, user.email)
+    const user = await authService.createUser(req.body);
+    const token = authService.generateToken(user.id, user.role, user.email);
 
     sendResponse({
       res,
@@ -61,8 +107,8 @@ export const register = async (req: Request, res: Response) => {
       success: true,
       message: 'Registration successful',
       data: { token, user },
-      schema: registerResponseSchema
-    })
+      schema: registerResponseSchema,
+    });
   } catch (error) {
     if (error instanceof AppError) {
       sendResponse({
@@ -71,8 +117,8 @@ export const register = async (req: Request, res: Response) => {
         success: false,
         message: error.message,
         errors: { code: error.code, details: error.details },
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     } else {
       sendResponse({
         res,
@@ -80,11 +126,11 @@ export const register = async (req: Request, res: Response) => {
         success: false,
         message: 'Internal server error',
         errors: error,
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     }
   }
-}
+};
 
 /**
  * Handles forgot password request
@@ -93,15 +139,15 @@ export const register = async (req: Request, res: Response) => {
  */
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
-    const user = await authService.forgotPassword(req.body.email)
+    const user = await authService.forgotPassword(req.body.email);
 
     sendResponse({
       res,
       success: true,
       message: 'OTP has been sent to your email',
       data: { user },
-      schema: forgotPasswordResponseSchema
-    })
+      schema: forgotPasswordResponseSchema,
+    });
   } catch (error) {
     if (error instanceof AppError) {
       sendResponse({
@@ -110,8 +156,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
         success: false,
         message: error.message,
         errors: { code: error.code, details: error.details },
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     } else {
       sendResponse({
         res,
@@ -119,11 +165,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
         success: false,
         message: 'Internal server error',
         errors: error,
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     }
   }
-}
+};
 
 /**
  * Verifies user session using JWT token
@@ -132,22 +178,22 @@ export const forgotPassword = async (req: Request, res: Response) => {
  */
 export const verifySession = async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers.authorization
-    
+    const authHeader = req.headers.authorization;
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw AppError.unauthorized('No token provided')
+      throw AppError.unauthorized('No token provided');
     }
 
-    const token = authHeader.substring(7) // Remove 'Bearer ' prefix
-    const user = await authService.verifySession(token)
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const user = await authService.verifySession(token);
 
     sendResponse({
       res,
       success: true,
       message: 'Session verified successfully',
       data: { user },
-      schema: verifySessionResponseSchema
-    })
+      schema: verifySessionResponseSchema,
+    });
   } catch (error) {
     if (error instanceof AppError) {
       sendResponse({
@@ -156,8 +202,8 @@ export const verifySession = async (req: Request, res: Response) => {
         success: false,
         message: error.message,
         errors: { code: error.code, details: error.details },
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     } else {
       sendResponse({
         res,
@@ -165,8 +211,8 @@ export const verifySession = async (req: Request, res: Response) => {
         success: false,
         message: 'Internal server error',
         errors: error,
-        schema: errorResponseSchema
-      })
+        schema: errorResponseSchema,
+      });
     }
   }
-}
+};

@@ -1,11 +1,31 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
-import { IUserCredentials, IUserDetails, IUserSignupInfo } from '@/interfaces'
+import { IUserCheckRequest, IUserCredentials, IUserDetails, IUserSignupInfo } from '@/interfaces'
 import { UserRepository } from '@/repositories/user.repository'
 import { sendOTPEmail } from '@/services/email.service'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 import { generateOTP, storeOTP } from '@/utils/otp'
+
+//########################################################################################
+// TODO: Remove all the unknown as casts
+//########################################################################################
+
+/**
+ * Checks if user exists
+ * @param email - User's email address
+ * @param mobileNumber - User's mobile number
+ * @returns User data if user exists, null if user does not exist
+ */
+export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUserCheckRequest): Promise<IUserDetails | null> => {
+  if (!email && !mobileNumber) {
+    throw AppError.badRequest('Either email or mobile number is required')
+  }
+
+  const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true }) as unknown as IUserDetails
+
+  return user
+}
 
 /**
  * Validates user credentials and returns user data without password
@@ -20,14 +40,13 @@ export const validateUser = async ({ email, password }: IUserCredentials): Promi
     throw AppError.unauthorized('Invalid credentials')
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password)
+  const isPasswordValid = await bcrypt.compare(password, user.password || '')
 
   if (!isPasswordValid) {
     throw AppError.unauthorized('Invalid credentials')
   }
 
-  const { password: _, ...userWithoutPassword } = user
-  return userWithoutPassword
+  return user as unknown as Omit<IUserDetails, 'password'>
 }
 
 /**
@@ -61,12 +80,12 @@ export const createUser = async (userData: IUserSignupInfo): Promise<Omit<IUserD
     throw AppError.badRequest('Email already exists', ERROR_CODES.USER_EXISTS)
   }
 
-  const hashedPassword = await bcrypt.hash(userData.password, 10)
+  const hashedPassword = await bcrypt.hash(userData.password || '', 10)
 
   const user = await UserRepository.create({
     ...userData,
     password: hashedPassword,
-  })
+  }) as unknown as IUserDetails
 
   return user
 }
@@ -87,7 +106,7 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
   storeOTP(email, otp)
   await sendOTPEmail(email, otp)
 
-  return user
+  return user as unknown as Omit<IUserDetails, 'password'>
 }
 
 /**
@@ -109,7 +128,7 @@ export const verifySession = async (token: string): Promise<Omit<IUserDetails, '
       throw AppError.unauthorized('User not found')
     }
 
-    return user
+    return user as unknown as Omit<IUserDetails, 'password'>
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       throw AppError.unauthorized('Invalid token')

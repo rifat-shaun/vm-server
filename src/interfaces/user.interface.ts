@@ -6,6 +6,11 @@ export interface IAuthenticatedRequest extends Request {
   user?: { id: string, email: string, role: string }
 }
 
+export interface IUserCheckRequest {
+  email?: string
+  mobileNumber?: string
+}
+
 export interface IUserCredentials {
   email: string
   password: string
@@ -13,9 +18,13 @@ export interface IUserCredentials {
 
 export interface IUserSignupInfo {
   email: string
-  password: string
-  firstName: string
-  lastName: string
+  password?: string
+  firstName?: string
+  lastName?: string
+  mobileNumber?: string
+  role: string
+  companyId: string
+  branchId: string
 }
 
 export interface IUserUpdateInfo {
@@ -28,7 +37,5 @@ export interface IUserUpdateInfo {
 }
 
 export interface IUserDetails extends IUserSignupInfo {
-  id: string
-  role: string
-  password: string
+  id: string,
 }

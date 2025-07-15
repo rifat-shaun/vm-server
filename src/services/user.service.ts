@@ -2,6 +2,10 @@ import { IUserDetails, IUserUpdateInfo } from '@/interfaces'
 import { UserRepository } from '@/repositories/user.repository'
 import { AppError, ERROR_CODES } from '@/utils/errors'
 
+//########################################################################################
+// TODO: Remove all the unknown as casts
+//########################################################################################
+
 /**
  * Get user profile by ID
  * @param userId - User's unique identifier
@@ -16,7 +20,7 @@ export const getUserDetails = async (userId: string): Promise<Omit<IUserDetails,
 
   const { password: _, ...userWithoutPassword } = user
 
-  return userWithoutPassword
+  return userWithoutPassword as unknown as Omit<IUserDetails, 'password'>
 }
 
 /**
@@ -36,5 +40,5 @@ export const updateUserDetails = async (userId: string, userData: IUserUpdateInf
 
   const { password: _, ...userWithoutPassword } = updatedUser
 
-  return userWithoutPassword
+  return userWithoutPassword as unknown as Omit<IUserDetails, 'password'>
 }

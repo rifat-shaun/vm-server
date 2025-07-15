@@ -1,9 +1,23 @@
 import { z } from 'zod'
 
+export const checkUserValidation = z.object({
+  body: z.object({
+    email: z.string().email('Invalid email format').optional(),
+    mobileNumber: z.string()
+    .min(6, 'Mobile number is too short')
+    .max(15, 'Mobile number is too long')
+    .regex(/^\d+$/, 'Mobile number must contain only digits')
+    .optional(),
+  }).refine((data) => data.email || data.mobileNumber, {
+    message: 'Either email or mobile number is required',
+    path: ['email', 'mobileNumber']
+  }),
+})
+
 export const loginValidation = z.object({
   body: z.object({
     email: z.string().email('Invalid email format'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
   }),
 })
 
@@ -11,7 +25,7 @@ export const registerValidation = z.object({
   body: z.object({
     email: z.string().email('Invalid email format'),
     password: z.string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(8, 'Password must be at least 8 characters')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
         'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
@@ -30,12 +44,12 @@ export const forgotPasswordValidation = z.object({
 export const resetPasswordValidation = z.object({
   body: z.object({
     password: z.string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(8, 'Password must be at least 8 characters')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
         'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
       ),
-    confirmPassword: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
     token: z.string().min(1, 'Token is required'),
   }),
 })

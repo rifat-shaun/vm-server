@@ -15,6 +15,13 @@ const authDataSchema = z.object({
   user: userSchema
 })
 
+export const checkUserResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    isUserExists: z.boolean(),
+    isNewUser: z.boolean()
+  })
+})
+
 export const loginResponseSchema = baseResponseSchema.extend({
   data: authDataSchema.nullable().optional()
 })

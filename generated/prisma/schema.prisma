@@ -11,20 +11,50 @@ datasource db {
 enum Role {
   ADMIN
   SUPER_ADMIN
-  USER
+  HOP
+  MANAGER
+  STAFF
 
   @@map("roles")
 }
 
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
-  email     String   @unique
-  firstName String   @map("first_name")
-  lastName  String   @map("last_name")
-  password  String
-  role      Role     @default(USER) @map("role")
+  id    String @id @default(uuid()) @db.Uuid
+  email String @unique
+  role  Role   @default(STAFF) @map("role")
+
+  firstName    String? @map("first_name")
+  lastName     String? @map("last_name")
+  password     String?
+  countryCode  String? @map("country_code")
+  mobileNumber String? @map("mobile_number")
+
+  companyId String @map("company_id") @db.Uuid
+  branchId  String @map("branch_id") @db.Uuid
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch  Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model Company {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique
+
+  users User[]
+
+  @@map("companies")
+}
+
+model Branch {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique
+
+  users User[]
+
+  @@map("branches")
 }

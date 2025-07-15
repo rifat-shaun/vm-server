@@ -4,17 +4,61 @@ import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 /**
+ * Creates a Company
+ * @param name - Company name
+ */
+const createCompany = async (name: string) => {
+  const existingCompany = await prisma.company.findFirst({
+    where: { name }
+  })
+  
+  if (existingCompany) {
+    return existingCompany
+  }
+  
+  return await prisma.company.create({
+    data: {
+      name,
+    },
+  })
+}
+
+/**
+ * Creates a Branch
+ * @param name - Branch name
+ */
+const createBranch = async (name: string) => {
+  const existingBranch = await prisma.branch.findFirst({
+    where: { name }
+  })
+  
+  if (existingBranch) {
+    return existingBranch
+  }
+  
+  return await prisma.branch.create({
+    data: {
+      name,
+    },
+  })
+}
+
+/**
  * Creates a SUPER ADMIN user
  * @param email - User email
  * @param firstName - User first name
  * @param lastName - User last name
  * @param password - User password (will be hashed)
+ * @param companyId - Company ID
+ * @param branchId - Branch ID
  */
 const createSuperAdmin = async (
   email: string,
   firstName: string,
   lastName: string,
-  password: string
+  password: string,
+  companyId: string,
+  branchId: string
 ) => {
   const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -27,12 +71,22 @@ const createSuperAdmin = async (
       lastName,
       password: hashedPassword,
       role: Role.SUPER_ADMIN,
+      companyId,
+      branchId,
     },
   })
 }
 
 async function main() {
   console.log('🌱 Starting database seeding...')
+
+  // Create Company
+  const company = await createCompany('BetaFore')
+  console.log(`✅ Created Company: ${company.name}`)
+
+  // Create Branch
+  const branch = await createBranch('Main Branch')
+  console.log(`✅ Created Branch: ${branch.name}`)
 
   // Create SUPER ADMIN users
   const superAdmins = [
@@ -49,7 +103,9 @@ async function main() {
       admin.email,
       admin.firstName,
       admin.lastName,
-      admin.password
+      admin.password,
+      company.id,
+      branch.id
     )
     console.log(`✅ Created SUPER ADMIN: ${user.email}`)
   }
