@@ -2302,16 +2302,19 @@ export namespace Prisma {
   export type CompanyMinAggregateOutputType = {
     id: string | null
     name: string | null
+    address: string | null
   }
 
   export type CompanyMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    address: string | null
   }
 
   export type CompanyCountAggregateOutputType = {
     id: number
     name: number
+    address: number
     _all: number
   }
 
@@ -2319,16 +2322,19 @@ export namespace Prisma {
   export type CompanyMinAggregateInputType = {
     id?: true
     name?: true
+    address?: true
   }
 
   export type CompanyMaxAggregateInputType = {
     id?: true
     name?: true
+    address?: true
   }
 
   export type CompanyCountAggregateInputType = {
     id?: true
     name?: true
+    address?: true
     _all?: true
   }
 
@@ -2407,6 +2413,7 @@ export namespace Prisma {
   export type CompanyGroupByOutputType = {
     id: string
     name: string
+    address: string | null
     _count: CompanyCountAggregateOutputType | null
     _min: CompanyMinAggregateOutputType | null
     _max: CompanyMaxAggregateOutputType | null
@@ -2429,6 +2436,7 @@ export namespace Prisma {
   export type CompanySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
     users?: boolean | Company$usersArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["company"]>
@@ -2436,19 +2444,22 @@ export namespace Prisma {
   export type CompanySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
   }, ExtArgs["result"]["company"]>
 
   export type CompanySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
   }, ExtArgs["result"]["company"]>
 
   export type CompanySelectScalar = {
     id?: boolean
     name?: boolean
+    address?: boolean
   }
 
-  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name", ExtArgs["result"]["company"]>
+  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "address", ExtArgs["result"]["company"]>
   export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Company$usersArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -2464,6 +2475,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      address: string | null
     }, ExtArgs["result"]["company"]>
     composites: {}
   }
@@ -2890,6 +2902,7 @@ export namespace Prisma {
   interface CompanyFieldRefs {
     readonly id: FieldRef<"Company", 'String'>
     readonly name: FieldRef<"Company", 'String'>
+    readonly address: FieldRef<"Company", 'String'>
   }
     
 
@@ -4385,7 +4398,8 @@ export namespace Prisma {
 
   export const CompanyScalarFieldEnum: {
     id: 'id',
-    name: 'name'
+    name: 'name',
+    address: 'address'
   };
 
   export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -4527,6 +4541,7 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    mobileNumber?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -4535,14 +4550,13 @@ export namespace Prisma {
     lastName?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     countryCode?: StringNullableFilter<"User"> | string | null
-    mobileNumber?: StringNullableFilter<"User"> | string | null
     companyId?: UuidFilter<"User"> | string
     branchId?: UuidFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     branch?: XOR<BranchScalarRelationFilter, BranchWhereInput>
-  }, "id" | "email">
+  }, "id" | "email" | "mobileNumber">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -4586,12 +4600,14 @@ export namespace Prisma {
     NOT?: CompanyWhereInput | CompanyWhereInput[]
     id?: UuidFilter<"Company"> | string
     name?: StringFilter<"Company"> | string
+    address?: StringNullableFilter<"Company"> | string | null
     users?: UserListRelationFilter
   }
 
   export type CompanyOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrderInput | SortOrder
     users?: UserOrderByRelationAggregateInput
   }
 
@@ -4601,12 +4617,14 @@ export namespace Prisma {
     AND?: CompanyWhereInput | CompanyWhereInput[]
     OR?: CompanyWhereInput[]
     NOT?: CompanyWhereInput | CompanyWhereInput[]
+    address?: StringNullableFilter<"Company"> | string | null
     users?: UserListRelationFilter
   }, "id" | "name">
 
   export type CompanyOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrderInput | SortOrder
     _count?: CompanyCountOrderByAggregateInput
     _max?: CompanyMaxOrderByAggregateInput
     _min?: CompanyMinOrderByAggregateInput
@@ -4618,6 +4636,7 @@ export namespace Prisma {
     NOT?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Company"> | string
     name?: StringWithAggregatesFilter<"Company"> | string
+    address?: StringNullableWithAggregatesFilter<"Company"> | string | null
   }
 
   export type BranchWhereInput = {
@@ -4766,40 +4785,47 @@ export namespace Prisma {
   export type CompanyCreateInput = {
     id?: string
     name: string
+    address?: string | null
     users?: UserCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUncheckedCreateInput = {
     id?: string
     name: string
+    address?: string | null
     users?: UserUncheckedCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyCreateManyInput = {
     id?: string
     name: string
+    address?: string | null
   }
 
   export type CompanyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CompanyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BranchCreateInput = {
@@ -5049,16 +5075,19 @@ export namespace Prisma {
   export type CompanyCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
   }
 
   export type CompanyMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
   }
 
   export type CompanyMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
   }
 
   export type BranchCountOrderByAggregateInput = {
@@ -5358,11 +5387,13 @@ export namespace Prisma {
   export type CompanyCreateWithoutUsersInput = {
     id?: string
     name: string
+    address?: string | null
   }
 
   export type CompanyUncheckedCreateWithoutUsersInput = {
     id?: string
     name: string
+    address?: string | null
   }
 
   export type CompanyCreateOrConnectWithoutUsersInput = {
@@ -5399,11 +5430,13 @@ export namespace Prisma {
   export type CompanyUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CompanyUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BranchUpsertWithoutUsersInput = {

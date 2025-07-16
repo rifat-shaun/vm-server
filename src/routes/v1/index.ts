@@ -4,12 +4,14 @@ import { authLimiter, rateLimiter } from '@/middlewares/rateLimiter.ts'
 
 import authRoutes from './auth.routes.ts'
 import userRoutes from './user.routes.ts'
+import companyRoutes from './company.routes.ts'
 
 const router = Router()
 
 // Apply rate limiter to auth routes
 router.use('/auth', authLimiter, authRoutes)
 router.use('/users', rateLimiter, userRoutes)
+router.use('/company', rateLimiter, companyRoutes)
 
 // Health check endpoint
 router.get('/health', (_req, res) => {

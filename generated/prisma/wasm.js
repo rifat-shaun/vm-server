@@ -137,7 +137,8 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.CompanyScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  address: 'address'
 };
 
 exports.Prisma.BranchScalarFieldEnum = {
