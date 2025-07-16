@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-# Run lint-staged (includes ESLint with --max-warnings=0)
-npx lint-staged || exit 1

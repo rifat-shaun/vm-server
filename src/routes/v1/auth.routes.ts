@@ -6,7 +6,7 @@ import { checkUserValidation, forgotPasswordValidation, loginValidation, registe
 
 const router = Router()
 
-router.get('/check-user', validateRequest(checkUserValidation), checkUser)
+router.post('/check-user', validateRequest(checkUserValidation), checkUser)
 router.post('/login', validateRequest(loginValidation), login)
 router.post('/register', validateRequest(registerValidation), register)
 router.post('/forgot-password', validateRequest(forgotPasswordValidation), forgotPassword)

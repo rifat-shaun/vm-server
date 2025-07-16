@@ -22,6 +22,9 @@ export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUse
     throw AppError.badRequest('Either email or mobile number is required')
   }
 
+  console.log('email', email)
+  console.log('mobileNumber', mobileNumber)
+
   const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true }) as unknown as IUserDetails
 
   return user

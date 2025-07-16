@@ -25,7 +25,7 @@ export const checkUser = async (req: Request, res: Response) => {
       res,
       success: true,
       message: user ? 'User exists' : 'User does not exist',
-      data: { isUserExists: !!user, isNewUser: !user?.password },
+      data: { isUserExists: !!user, isNewUser: user && !user?.password },
       schema: checkUserResponseSchema,
     });
   } catch (error) {
