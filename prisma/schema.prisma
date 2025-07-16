@@ -46,16 +46,21 @@ model Company {
   name          String  @unique
   address       String? 
 
-  users  User[]
+  users         User[]
+  branches      Branch[]
 
   @@map("companies")
 }
 
 model Branch {
-  id     String  @id @default(uuid()) @db.Uuid
-  name   String  @unique
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String  @unique
+  address      String?
+  
+  companyId    String  @db.Uuid @map("company_id")
+  company      Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  users  User[]
+  users        User[]
 
   @@map("branches")
 }

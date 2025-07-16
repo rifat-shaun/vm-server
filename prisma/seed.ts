@@ -26,8 +26,9 @@ const createCompany = async (name: string) => {
 /**
  * Creates a Branch
  * @param name - Branch name
+ * @param companyId - Company ID
  */
-const createBranch = async (name: string) => {
+const createBranch = async (name: string, companyId: string) => {
   const existingBranch = await prisma.branch.findFirst({
     where: { name }
   })
@@ -39,6 +40,7 @@ const createBranch = async (name: string) => {
   return await prisma.branch.create({
     data: {
       name,
+      companyId,
     },
   })
 }
@@ -85,7 +87,7 @@ async function main() {
   console.log(`✅ Created Company: ${company.name}`)
 
   // Create Branch
-  const branch = await createBranch('Main Branch')
+  const branch = await createBranch('Main Branch', company.id)
   console.log(`✅ Created Branch: ${branch.name}`)
 
   // Create SUPER ADMIN users

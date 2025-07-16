@@ -143,7 +143,9 @@ exports.Prisma.CompanyScalarFieldEnum = {
 
 exports.Prisma.BranchScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  address: 'address',
+  companyId: 'companyId'
 };
 
 exports.Prisma.SortOrder = {

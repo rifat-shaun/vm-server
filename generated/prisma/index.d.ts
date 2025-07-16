@@ -1072,10 +1072,12 @@ export namespace Prisma {
 
   export type CompanyCountOutputType = {
     users: number
+    branches: number
   }
 
   export type CompanyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | CompanyCountOutputTypeCountUsersArgs
+    branches?: boolean | CompanyCountOutputTypeCountBranchesArgs
   }
 
   // Custom InputTypes
@@ -1094,6 +1096,13 @@ export namespace Prisma {
    */
   export type CompanyCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeCountBranchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BranchWhereInput
   }
 
 
@@ -2438,6 +2447,7 @@ export namespace Prisma {
     name?: boolean
     address?: boolean
     users?: boolean | Company$usersArgs<ExtArgs>
+    branches?: boolean | Company$branchesArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["company"]>
 
@@ -2462,6 +2472,7 @@ export namespace Prisma {
   export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "address", ExtArgs["result"]["company"]>
   export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Company$usersArgs<ExtArgs>
+    branches?: boolean | Company$branchesArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CompanyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2471,6 +2482,7 @@ export namespace Prisma {
     name: "Company"
     objects: {
       users: Prisma.$UserPayload<ExtArgs>[]
+      branches: Prisma.$BranchPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2871,6 +2883,7 @@ export namespace Prisma {
   export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     users<T extends Company$usersArgs<ExtArgs> = {}>(args?: Subset<T, Company$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    branches<T extends Company$branchesArgs<ExtArgs> = {}>(args?: Subset<T, Company$branchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3315,6 +3328,30 @@ export namespace Prisma {
   }
 
   /**
+   * Company.branches
+   */
+  export type Company$branchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Branch
+     */
+    select?: BranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Branch
+     */
+    omit?: BranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BranchInclude<ExtArgs> | null
+    where?: BranchWhereInput
+    orderBy?: BranchOrderByWithRelationInput | BranchOrderByWithRelationInput[]
+    cursor?: BranchWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BranchScalarFieldEnum | BranchScalarFieldEnum[]
+  }
+
+  /**
    * Company without action
    */
   export type CompanyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3346,16 +3383,22 @@ export namespace Prisma {
   export type BranchMinAggregateOutputType = {
     id: string | null
     name: string | null
+    address: string | null
+    companyId: string | null
   }
 
   export type BranchMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    address: string | null
+    companyId: string | null
   }
 
   export type BranchCountAggregateOutputType = {
     id: number
     name: number
+    address: number
+    companyId: number
     _all: number
   }
 
@@ -3363,16 +3406,22 @@ export namespace Prisma {
   export type BranchMinAggregateInputType = {
     id?: true
     name?: true
+    address?: true
+    companyId?: true
   }
 
   export type BranchMaxAggregateInputType = {
     id?: true
     name?: true
+    address?: true
+    companyId?: true
   }
 
   export type BranchCountAggregateInputType = {
     id?: true
     name?: true
+    address?: true
+    companyId?: true
     _all?: true
   }
 
@@ -3451,6 +3500,8 @@ export namespace Prisma {
   export type BranchGroupByOutputType = {
     id: string
     name: string
+    address: string | null
+    companyId: string
     _count: BranchCountAggregateOutputType | null
     _min: BranchMinAggregateOutputType | null
     _max: BranchMaxAggregateOutputType | null
@@ -3473,6 +3524,9 @@ export namespace Prisma {
   export type BranchSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
+    companyId?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
     users?: boolean | Branch$usersArgs<ExtArgs>
     _count?: boolean | BranchCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["branch"]>
@@ -3480,34 +3534,50 @@ export namespace Prisma {
   export type BranchSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
+    companyId?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["branch"]>
 
   export type BranchSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    address?: boolean
+    companyId?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["branch"]>
 
   export type BranchSelectScalar = {
     id?: boolean
     name?: boolean
+    address?: boolean
+    companyId?: boolean
   }
 
-  export type BranchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name", ExtArgs["result"]["branch"]>
+  export type BranchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "address" | "companyId", ExtArgs["result"]["branch"]>
   export type BranchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
     users?: boolean | Branch$usersArgs<ExtArgs>
     _count?: boolean | BranchCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type BranchIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type BranchIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type BranchIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+  export type BranchIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
 
   export type $BranchPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Branch"
     objects: {
+      company: Prisma.$CompanyPayload<ExtArgs>
       users: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      address: string | null
+      companyId: string
     }, ExtArgs["result"]["branch"]>
     composites: {}
   }
@@ -3902,6 +3972,7 @@ export namespace Prisma {
    */
   export interface Prisma__BranchClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     users<T extends Branch$usersArgs<ExtArgs> = {}>(args?: Subset<T, Branch$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3934,6 +4005,8 @@ export namespace Prisma {
   interface BranchFieldRefs {
     readonly id: FieldRef<"Branch", 'String'>
     readonly name: FieldRef<"Branch", 'String'>
+    readonly address: FieldRef<"Branch", 'String'>
+    readonly companyId: FieldRef<"Branch", 'String'>
   }
     
 
@@ -4183,6 +4256,10 @@ export namespace Prisma {
      */
     data: BranchCreateManyInput | BranchCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BranchIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4253,6 +4330,10 @@ export namespace Prisma {
      * Limit how many Branches to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BranchIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4407,7 +4488,9 @@ export namespace Prisma {
 
   export const BranchScalarFieldEnum: {
     id: 'id',
-    name: 'name'
+    name: 'name',
+    address: 'address',
+    companyId: 'companyId'
   };
 
   export type BranchScalarFieldEnum = (typeof BranchScalarFieldEnum)[keyof typeof BranchScalarFieldEnum]
@@ -4602,6 +4685,7 @@ export namespace Prisma {
     name?: StringFilter<"Company"> | string
     address?: StringNullableFilter<"Company"> | string | null
     users?: UserListRelationFilter
+    branches?: BranchListRelationFilter
   }
 
   export type CompanyOrderByWithRelationInput = {
@@ -4609,6 +4693,7 @@ export namespace Prisma {
     name?: SortOrder
     address?: SortOrderInput | SortOrder
     users?: UserOrderByRelationAggregateInput
+    branches?: BranchOrderByRelationAggregateInput
   }
 
   export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -4619,6 +4704,7 @@ export namespace Prisma {
     NOT?: CompanyWhereInput | CompanyWhereInput[]
     address?: StringNullableFilter<"Company"> | string | null
     users?: UserListRelationFilter
+    branches?: BranchListRelationFilter
   }, "id" | "name">
 
   export type CompanyOrderByWithAggregationInput = {
@@ -4645,12 +4731,18 @@ export namespace Prisma {
     NOT?: BranchWhereInput | BranchWhereInput[]
     id?: UuidFilter<"Branch"> | string
     name?: StringFilter<"Branch"> | string
+    address?: StringNullableFilter<"Branch"> | string | null
+    companyId?: UuidFilter<"Branch"> | string
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     users?: UserListRelationFilter
   }
 
   export type BranchOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrderInput | SortOrder
+    companyId?: SortOrder
+    company?: CompanyOrderByWithRelationInput
     users?: UserOrderByRelationAggregateInput
   }
 
@@ -4660,12 +4752,17 @@ export namespace Prisma {
     AND?: BranchWhereInput | BranchWhereInput[]
     OR?: BranchWhereInput[]
     NOT?: BranchWhereInput | BranchWhereInput[]
+    address?: StringNullableFilter<"Branch"> | string | null
+    companyId?: UuidFilter<"Branch"> | string
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     users?: UserListRelationFilter
   }, "id" | "name">
 
   export type BranchOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrderInput | SortOrder
+    companyId?: SortOrder
     _count?: BranchCountOrderByAggregateInput
     _max?: BranchMaxOrderByAggregateInput
     _min?: BranchMinOrderByAggregateInput
@@ -4677,6 +4774,8 @@ export namespace Prisma {
     NOT?: BranchScalarWhereWithAggregatesInput | BranchScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Branch"> | string
     name?: StringWithAggregatesFilter<"Branch"> | string
+    address?: StringNullableWithAggregatesFilter<"Branch"> | string | null
+    companyId?: UuidWithAggregatesFilter<"Branch"> | string
   }
 
   export type UserCreateInput = {
@@ -4787,6 +4886,7 @@ export namespace Prisma {
     name: string
     address?: string | null
     users?: UserCreateNestedManyWithoutCompanyInput
+    branches?: BranchCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUncheckedCreateInput = {
@@ -4794,6 +4894,7 @@ export namespace Prisma {
     name: string
     address?: string | null
     users?: UserUncheckedCreateNestedManyWithoutCompanyInput
+    branches?: BranchUncheckedCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUpdateInput = {
@@ -4801,6 +4902,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutCompanyNestedInput
+    branches?: BranchUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyUncheckedUpdateInput = {
@@ -4808,6 +4910,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutCompanyNestedInput
+    branches?: BranchUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyCreateManyInput = {
@@ -4831,40 +4934,53 @@ export namespace Prisma {
   export type BranchCreateInput = {
     id?: string
     name: string
+    address?: string | null
+    company: CompanyCreateNestedOneWithoutBranchesInput
     users?: UserCreateNestedManyWithoutBranchInput
   }
 
   export type BranchUncheckedCreateInput = {
     id?: string
     name: string
+    address?: string | null
+    companyId: string
     users?: UserUncheckedCreateNestedManyWithoutBranchInput
   }
 
   export type BranchUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: CompanyUpdateOneRequiredWithoutBranchesNestedInput
     users?: UserUpdateManyWithoutBranchNestedInput
   }
 
   export type BranchUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
     users?: UserUncheckedUpdateManyWithoutBranchNestedInput
   }
 
   export type BranchCreateManyInput = {
     id?: string
     name: string
+    address?: string | null
+    companyId: string
   }
 
   export type BranchUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BranchUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -5068,7 +5184,17 @@ export namespace Prisma {
     none?: UserWhereInput
   }
 
+  export type BranchListRelationFilter = {
+    every?: BranchWhereInput
+    some?: BranchWhereInput
+    none?: BranchWhereInput
+  }
+
   export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BranchOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -5093,16 +5219,22 @@ export namespace Prisma {
   export type BranchCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
+    companyId?: SortOrder
   }
 
   export type BranchMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
+    companyId?: SortOrder
   }
 
   export type BranchMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    address?: SortOrder
+    companyId?: SortOrder
   }
 
   export type CompanyCreateNestedOneWithoutUsersInput = {
@@ -5156,11 +5288,25 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
+  export type BranchCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput> | BranchCreateWithoutCompanyInput[] | BranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: BranchCreateOrConnectWithoutCompanyInput | BranchCreateOrConnectWithoutCompanyInput[]
+    createMany?: BranchCreateManyCompanyInputEnvelope
+    connect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutCompanyInput = {
     create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput> | UserCreateWithoutCompanyInput[] | UserUncheckedCreateWithoutCompanyInput[]
     connectOrCreate?: UserCreateOrConnectWithoutCompanyInput | UserCreateOrConnectWithoutCompanyInput[]
     createMany?: UserCreateManyCompanyInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type BranchUncheckedCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput> | BranchCreateWithoutCompanyInput[] | BranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: BranchCreateOrConnectWithoutCompanyInput | BranchCreateOrConnectWithoutCompanyInput[]
+    createMany?: BranchCreateManyCompanyInputEnvelope
+    connect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
   }
 
   export type UserUpdateManyWithoutCompanyNestedInput = {
@@ -5177,6 +5323,20 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type BranchUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput> | BranchCreateWithoutCompanyInput[] | BranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: BranchCreateOrConnectWithoutCompanyInput | BranchCreateOrConnectWithoutCompanyInput[]
+    upsert?: BranchUpsertWithWhereUniqueWithoutCompanyInput | BranchUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: BranchCreateManyCompanyInputEnvelope
+    set?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    disconnect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    delete?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    connect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    update?: BranchUpdateWithWhereUniqueWithoutCompanyInput | BranchUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: BranchUpdateManyWithWhereWithoutCompanyInput | BranchUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: BranchScalarWhereInput | BranchScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutCompanyNestedInput = {
     create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput> | UserCreateWithoutCompanyInput[] | UserUncheckedCreateWithoutCompanyInput[]
     connectOrCreate?: UserCreateOrConnectWithoutCompanyInput | UserCreateOrConnectWithoutCompanyInput[]
@@ -5191,6 +5351,26 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
+  export type BranchUncheckedUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput> | BranchCreateWithoutCompanyInput[] | BranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: BranchCreateOrConnectWithoutCompanyInput | BranchCreateOrConnectWithoutCompanyInput[]
+    upsert?: BranchUpsertWithWhereUniqueWithoutCompanyInput | BranchUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: BranchCreateManyCompanyInputEnvelope
+    set?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    disconnect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    delete?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    connect?: BranchWhereUniqueInput | BranchWhereUniqueInput[]
+    update?: BranchUpdateWithWhereUniqueWithoutCompanyInput | BranchUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: BranchUpdateManyWithWhereWithoutCompanyInput | BranchUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: BranchScalarWhereInput | BranchScalarWhereInput[]
+  }
+
+  export type CompanyCreateNestedOneWithoutBranchesInput = {
+    create?: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBranchesInput
+    connect?: CompanyWhereUniqueInput
+  }
+
   export type UserCreateNestedManyWithoutBranchInput = {
     create?: XOR<UserCreateWithoutBranchInput, UserUncheckedCreateWithoutBranchInput> | UserCreateWithoutBranchInput[] | UserUncheckedCreateWithoutBranchInput[]
     connectOrCreate?: UserCreateOrConnectWithoutBranchInput | UserCreateOrConnectWithoutBranchInput[]
@@ -5203,6 +5383,14 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutBranchInput | UserCreateOrConnectWithoutBranchInput[]
     createMany?: UserCreateManyBranchInputEnvelope
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type CompanyUpdateOneRequiredWithoutBranchesNestedInput = {
+    create?: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBranchesInput
+    upsert?: CompanyUpsertWithoutBranchesInput
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutBranchesInput, CompanyUpdateWithoutBranchesInput>, CompanyUncheckedUpdateWithoutBranchesInput>
   }
 
   export type UserUpdateManyWithoutBranchNestedInput = {
@@ -5388,12 +5576,14 @@ export namespace Prisma {
     id?: string
     name: string
     address?: string | null
+    branches?: BranchCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUncheckedCreateWithoutUsersInput = {
     id?: string
     name: string
     address?: string | null
+    branches?: BranchUncheckedCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyCreateOrConnectWithoutUsersInput = {
@@ -5404,11 +5594,15 @@ export namespace Prisma {
   export type BranchCreateWithoutUsersInput = {
     id?: string
     name: string
+    address?: string | null
+    company: CompanyCreateNestedOneWithoutBranchesInput
   }
 
   export type BranchUncheckedCreateWithoutUsersInput = {
     id?: string
     name: string
+    address?: string | null
+    companyId: string
   }
 
   export type BranchCreateOrConnectWithoutUsersInput = {
@@ -5431,12 +5625,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    branches?: BranchUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
+    branches?: BranchUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
   export type BranchUpsertWithoutUsersInput = {
@@ -5453,11 +5649,15 @@ export namespace Prisma {
   export type BranchUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: CompanyUpdateOneRequiredWithoutBranchesNestedInput
   }
 
   export type BranchUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateWithoutCompanyInput = {
@@ -5498,6 +5698,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BranchCreateWithoutCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
+    users?: UserCreateNestedManyWithoutBranchInput
+  }
+
+  export type BranchUncheckedCreateWithoutCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
+    users?: UserUncheckedCreateNestedManyWithoutBranchInput
+  }
+
+  export type BranchCreateOrConnectWithoutCompanyInput = {
+    where: BranchWhereUniqueInput
+    create: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type BranchCreateManyCompanyInputEnvelope = {
+    data: BranchCreateManyCompanyInput | BranchCreateManyCompanyInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithWhereUniqueWithoutCompanyInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutCompanyInput, UserUncheckedUpdateWithoutCompanyInput>
@@ -5530,6 +5754,51 @@ export namespace Prisma {
     branchId?: UuidFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+  }
+
+  export type BranchUpsertWithWhereUniqueWithoutCompanyInput = {
+    where: BranchWhereUniqueInput
+    update: XOR<BranchUpdateWithoutCompanyInput, BranchUncheckedUpdateWithoutCompanyInput>
+    create: XOR<BranchCreateWithoutCompanyInput, BranchUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type BranchUpdateWithWhereUniqueWithoutCompanyInput = {
+    where: BranchWhereUniqueInput
+    data: XOR<BranchUpdateWithoutCompanyInput, BranchUncheckedUpdateWithoutCompanyInput>
+  }
+
+  export type BranchUpdateManyWithWhereWithoutCompanyInput = {
+    where: BranchScalarWhereInput
+    data: XOR<BranchUpdateManyMutationInput, BranchUncheckedUpdateManyWithoutCompanyInput>
+  }
+
+  export type BranchScalarWhereInput = {
+    AND?: BranchScalarWhereInput | BranchScalarWhereInput[]
+    OR?: BranchScalarWhereInput[]
+    NOT?: BranchScalarWhereInput | BranchScalarWhereInput[]
+    id?: UuidFilter<"Branch"> | string
+    name?: StringFilter<"Branch"> | string
+    address?: StringNullableFilter<"Branch"> | string | null
+    companyId?: UuidFilter<"Branch"> | string
+  }
+
+  export type CompanyCreateWithoutBranchesInput = {
+    id?: string
+    name: string
+    address?: string | null
+    users?: UserCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyUncheckedCreateWithoutBranchesInput = {
+    id?: string
+    name: string
+    address?: string | null
+    users?: UserUncheckedCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyCreateOrConnectWithoutBranchesInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
   }
 
   export type UserCreateWithoutBranchInput = {
@@ -5570,6 +5839,31 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CompanyUpsertWithoutBranchesInput = {
+    update: XOR<CompanyUpdateWithoutBranchesInput, CompanyUncheckedUpdateWithoutBranchesInput>
+    create: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutBranchesInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutBranchesInput, CompanyUncheckedUpdateWithoutBranchesInput>
+  }
+
+  export type CompanyUpdateWithoutBranchesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUpdateManyWithoutCompanyNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutBranchesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUncheckedUpdateManyWithoutCompanyNestedInput
+  }
+
   export type UserUpsertWithWhereUniqueWithoutBranchInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutBranchInput, UserUncheckedUpdateWithoutBranchInput>
@@ -5598,6 +5892,12 @@ export namespace Prisma {
     branchId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type BranchCreateManyCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
   }
 
   export type UserUpdateWithoutCompanyInput = {
@@ -5640,6 +5940,26 @@ export namespace Prisma {
     branchId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BranchUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUpdateManyWithoutBranchNestedInput
+  }
+
+  export type BranchUncheckedUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUncheckedUpdateManyWithoutBranchNestedInput
+  }
+
+  export type BranchUncheckedUpdateManyWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateManyBranchInput = {
