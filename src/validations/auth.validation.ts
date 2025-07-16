@@ -1,23 +1,33 @@
 import { z } from 'zod'
 
+// Common auth validation schemas
+const emailValidation = z.string().email('Invalid email format').optional()
+const mobileNumberValidation = z.string()
+  .min(6, 'Mobile number is too short')
+  .max(15, 'Mobile number is too long')
+  .regex(/^\d+$/, 'Mobile number must contain only digits')
+  .optional()
+
+const baseAuthSchema = z.object({
+  email: emailValidation,
+  mobileNumber: mobileNumberValidation,
+})
+
+const contactInfoSchema = baseAuthSchema.refine((data) => data.email || data.mobileNumber, {
+  message: 'Either email or mobile number is required',
+  path: ['email', 'mobileNumber']
+})
+
 export const checkUserValidation = z.object({
-  body: z.object({
-    email: z.string().email('Invalid email format').optional(),
-    mobileNumber: z.string()
-    .min(6, 'Mobile number is too short')
-    .max(15, 'Mobile number is too long')
-    .regex(/^\d+$/, 'Mobile number must contain only digits')
-    .optional(),
-  }).refine((data) => data.email || data.mobileNumber, {
-    message: 'Either email or mobile number is required',
-    path: ['email', 'mobileNumber']
-  }),
+  body: contactInfoSchema,
 })
 
 export const loginValidation = z.object({
-  body: z.object({
-    email: z.string().email('Invalid email format'),
+  body: baseAuthSchema.extend({
     password: z.string().min(8, 'Password must be at least 8 characters'),
+  }).refine((data) => data.email || data.mobileNumber, {
+    message: 'Either email or mobile number is required',
+    path: ['email', 'mobileNumber']
   }),
 })
 

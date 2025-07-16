@@ -12,7 +12,8 @@ export interface IUserCheckRequest {
 }
 
 export interface IUserCredentials {
-  email: string
+  email?: string
+  mobileNumber?: string
   password: string
 }
 

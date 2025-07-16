@@ -22,9 +22,6 @@ export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUse
     throw AppError.badRequest('Either email or mobile number is required')
   }
 
-  console.log('email', email)
-  console.log('mobileNumber', mobileNumber)
-
   const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true }) as unknown as IUserDetails
 
   return user
@@ -34,10 +31,11 @@ export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUse
  * Validates user credentials and returns user data without password
  * @param email - User's email address
  * @param password - User's password
+ * @param mobileNumber - User's mobile number
  * @returns User data if valid, null if invalid
  */
-export const validateUser = async ({ email, password }: IUserCredentials): Promise<Omit<IUserDetails, 'password'>> => {
-  const user = await UserRepository.findByEmail(email, { password: true })
+export const validateUser = async ({ email, mobileNumber, password }: IUserCredentials): Promise<Omit<IUserDetails, 'password'>> => {
+  const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true })
 
   if (!user) {
     throw AppError.unauthorized('Invalid credentials')
