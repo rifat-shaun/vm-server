@@ -21,6 +21,13 @@ export const CompanyRepository = {
     });
     return company;
   },
+
+  findById: async (id: string) => {
+    return prisma.company.findUnique({
+      where: { id },
+    });
+  },
+
   findByName: async (name: string) => {
     return prisma.company.findUnique({
       where: { name },
