@@ -10,6 +10,7 @@ import { config } from '../../config'
 const authSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'auth.json'), 'utf8'))
 const userSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'user.json'), 'utf8'))
 const companySpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'company.json'), 'utf8'))
+const branchSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'branch.json'), 'utf8'))
 const commonSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'common.json'), 'utf8'))
 
 // Merge the specifications
@@ -29,12 +30,14 @@ const specs = {
   tags: [
     ...authSpec.tags,
     ...userSpec.tags,
-    ...companySpec.tags
+    ...companySpec.tags,
+    ...branchSpec.tags
   ],
   paths: {
     ...(authSpec.paths || {}),
     ...(userSpec.paths || {}),
-    ...(companySpec.paths || {})
+    ...(companySpec.paths || {}),
+    ...(branchSpec.paths || {})
   },
   components: {
     securitySchemes: commonSpec.components.securitySchemes
