@@ -8,7 +8,7 @@ import {
   verifySessionResponseSchema,
   checkUserResponseSchema,
 } from '@/response-schema';
-import * as authService from '@/services/auth.service';
+import { authService } from '@/services';
 import { AppError } from '@/utils/errors';
 import { sendResponse } from '@/utils/sendResponse';
 
@@ -24,7 +24,17 @@ export const checkUser = async (req: Request, res: Response) => {
     const isNewUser = user && !user?.password;
 
     if (isNewUser) {
-      // TODO: Send OTP through email or mobile number
+      await authService.sendOTP(user.email);
+
+      sendResponse({
+        res,
+        success: true,
+        message: 'OTP has been sent to your email',
+        data: { isUserExists: !!user, isNewUser },
+        schema: checkUserResponseSchema,
+      });
+
+      return;
     }
 
     sendResponse({

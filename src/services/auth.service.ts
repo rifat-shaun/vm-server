@@ -1,11 +1,11 @@
-import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
-import { IUserCheckRequest, IUserCredentials, IUserDetails, IUserSignupInfo } from '@/interfaces'
-import { UserRepository } from '@/repositories/user.repository'
-import { sendOTPEmail } from '@/services/email.service'
-import { AppError, ERROR_CODES } from '@/utils/errors'
-import { generateOTP, storeOTP } from '@/utils/otp'
+import { IUserCheckRequest, IUserCredentials, IUserDetails, IUserSignupInfo } from '@/interfaces';
+import { UserRepository } from '@/repositories/user.repository';
+import { sendOTPEmail } from '@/services/email.service';
+import { AppError, ERROR_CODES } from '@/utils/errors';
+import { generateOTP, storeOTP } from '@/utils/otp';
 
 //########################################################################################
 // TODO: Remove all the unknown as casts
@@ -17,15 +17,20 @@ import { generateOTP, storeOTP } from '@/utils/otp'
  * @param mobileNumber - User's mobile number
  * @returns User data if user exists, null if user does not exist
  */
-export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUserCheckRequest): Promise<IUserDetails | null> => {
+export const getUserByEmailOrMobileNumber = async ({
+  email,
+  mobileNumber,
+}: IUserCheckRequest): Promise<IUserDetails | null> => {
   if (!email && !mobileNumber) {
-    throw AppError.badRequest('Either email or mobile number is required')
+    throw AppError.badRequest('Either email or mobile number is required');
   }
 
-  const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true }) as unknown as IUserDetails
+  const user = (await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', {
+    password: true,
+  })) as unknown as IUserDetails;
 
-  return user
-}
+  return user;
+};
 
 /**
  * Validates user credentials and returns user data without password
@@ -34,21 +39,27 @@ export const getUserByEmailOrMobileNumber = async ({ email, mobileNumber }: IUse
  * @param mobileNumber - User's mobile number
  * @returns User data if valid, null if invalid
  */
-export const validateUser = async ({ email, mobileNumber, password }: IUserCredentials): Promise<Omit<IUserDetails, 'password'>> => {
-  const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', { password: true })
+export const validateUser = async ({
+  email,
+  mobileNumber,
+  password,
+}: IUserCredentials): Promise<Omit<IUserDetails, 'password'>> => {
+  const user = await UserRepository.findByEmailOrMobileNumber(email || '', mobileNumber || '', {
+    password: true,
+  });
 
   if (!user) {
-    throw AppError.unauthorized('Invalid credentials')
+    throw AppError.unauthorized('Invalid credentials');
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password || '')
+  const isPasswordValid = await bcrypt.compare(password, user.password || '');
 
   if (!isPasswordValid) {
-    throw AppError.unauthorized('Invalid credentials')
+    throw AppError.unauthorized('Invalid credentials');
   }
 
-  return user as unknown as Omit<IUserDetails, 'password'>
-}
+  return user as unknown as Omit<IUserDetails, 'password'>;
+};
 
 /**
  * Generates a JWT token for authenticated user
@@ -59,37 +70,35 @@ export const validateUser = async ({ email, mobileNumber, password }: IUserCrede
  */
 export const generateToken = (userId: string, role: string, email: string): string => {
   if (!process.env.JWT_SECRET) {
-    throw AppError.internal('JWT secret not configured')
+    throw AppError.internal('JWT secret not configured');
   }
 
-  return jwt.sign(
-    { userId, role, email },
-    process.env.JWT_SECRET,
-    { expiresIn: '1d' }
-  )
-}
+  return jwt.sign({ userId, role, email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+};
 
 /**
  * Creates a new user account
  * @param userData - User registration data
  * @returns Created user data without password, null if email exists
  */
-export const createUser = async (userData: IUserSignupInfo): Promise<Omit<IUserDetails, 'password'>> => {
-  const existingUser = await UserRepository.findByEmail(userData.email)
+export const createUser = async (
+  userData: IUserSignupInfo
+): Promise<Omit<IUserDetails, 'password'>> => {
+  const existingUser = await UserRepository.findByEmail(userData.email);
 
   if (existingUser) {
-    throw AppError.badRequest('Email already exists', ERROR_CODES.USER_EXISTS)
+    throw AppError.badRequest('Email already exists', ERROR_CODES.USER_EXISTS);
   }
 
-  const hashedPassword = await bcrypt.hash(userData.password || '', 10)
+  const hashedPassword = await bcrypt.hash(userData.password || '', 10);
 
-  const user = await UserRepository.create({
+  const user = (await UserRepository.create({
     ...userData,
     password: hashedPassword,
-  }) as unknown as IUserDetails
+  })) as unknown as IUserDetails;
 
-  return user
-}
+  return user;
+};
 
 /**
  * Handles forgot password request by generating and sending OTP
@@ -97,18 +106,16 @@ export const createUser = async (userData: IUserSignupInfo): Promise<Omit<IUserD
  * @returns User data without password
  */
 export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 'password'>> => {
-  const user = await UserRepository.findByEmail(email)
+  const user = await UserRepository.findByEmail(email);
 
   if (!user) {
-    throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND)
+    throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND);
   }
 
-  const otp = generateOTP()
-  storeOTP(email, otp)
-  await sendOTPEmail(email, otp)
+  await sendOTP(email);
 
-  return user as unknown as Omit<IUserDetails, 'password'>
-}
+  return user as unknown as Omit<IUserDetails, 'password'>;
+};
 
 /**
  * Verifies JWT token and returns user session information
@@ -117,26 +124,53 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
  */
 export const verifySession = async (token: string): Promise<Omit<IUserDetails, 'password'>> => {
   if (!process.env.JWT_SECRET) {
-    throw AppError.internal('JWT secret not configured')
+    throw AppError.internal('JWT secret not configured');
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string; role: string; email: string }
-    
-    const user = await UserRepository.findById(decoded.userId)
-    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      userId: string;
+      role: string;
+      email: string;
+    };
+
+    const user = await UserRepository.findById(decoded.userId);
+
     if (!user) {
-      throw AppError.unauthorized('User not found')
+      throw AppError.unauthorized('User not found');
     }
 
-    return user as unknown as Omit<IUserDetails, 'password'>
+    return user as unknown as Omit<IUserDetails, 'password'>;
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      throw AppError.unauthorized('Invalid token')
+      throw AppError.unauthorized('Invalid token');
     }
     if (error instanceof jwt.TokenExpiredError) {
-      throw AppError.unauthorized('Token expired')
+      throw AppError.unauthorized('Token expired');
     }
-    throw error
+    throw error;
   }
-}
+};
+
+/**
+ * Sends OTP to user's email or mobile number
+ * @param email - User's email address
+ * @param mobileNumber - User's mobile number
+ * @param otp - OTP to send
+ */
+export const sendOTP = async (
+  email?: string | null,
+  mobileNumber?: string | null,
+): Promise<void> => {
+  const otp = generateOTP();
+  storeOTP(email || mobileNumber || '', otp);
+
+  if (email) {
+    await sendOTPEmail(email, otp);
+  } else if (mobileNumber) {
+    // TODO: Send OTP to mobile number
+    throw AppError.badRequest('Mobile number is not supported yet');
+  } else {
+    throw AppError.badRequest('Either email or mobile number is required');
+  }
+};

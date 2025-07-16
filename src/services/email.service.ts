@@ -42,4 +42,4 @@ export const sendOTPEmail = async (email: string, otp: string) => {
   const text = `Your OTP for password reset is: ${otp}\nThis OTP will expire in 5 minutes.`
   
   await sendEmail(email, subject, text)
-} 
+}
