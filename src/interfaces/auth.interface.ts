@@ -8,6 +8,13 @@ export interface IUser {
   role: string
 }
 
+export interface IOTP {
+  email?: string | null
+  mobileNumber?: string | null
+  otp: string
+  expiresAt: Date
+}
+
 export interface IAuthService {
   validateUser(credentials: LoginRequestDto): Promise<IUser>
   createUser(userData: RegisterRequestDto): Promise<IUser>

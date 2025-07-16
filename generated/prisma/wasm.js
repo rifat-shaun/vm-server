@@ -138,14 +138,28 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.CompanyScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  address: 'address'
+  address: 'address',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.BranchScalarFieldEnum = {
   id: 'id',
   name: 'name',
   address: 'address',
-  companyId: 'companyId'
+  companyId: 'companyId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OTPScalarFieldEnum = {
+  id: 'id',
+  otp: 'otp',
+  expiresAt: 'expiresAt',
+  email: 'email',
+  mobileNumber: 'mobileNumber',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -173,7 +187,8 @@ exports.Role = exports.$Enums.Role = {
 exports.Prisma.ModelName = {
   User: 'User',
   Company: 'Company',
-  Branch: 'Branch'
+  Branch: 'Branch',
+  OTP: 'OTP'
 };
 
 /**

@@ -21,11 +21,17 @@ export const checkUser = async (req: Request, res: Response) => {
   try {
     const user = await authService.getUserByEmailOrMobileNumber(req.body);
 
+    const isNewUser = user && !user?.password;
+
+    if (isNewUser) {
+      // TODO: Send OTP through email or mobile number
+    }
+
     sendResponse({
       res,
       success: true,
       message: user ? 'User exists' : 'User does not exist',
-      data: { isUserExists: !!user, isNewUser: user && !user?.password },
+      data: { isUserExists: !!user, isNewUser },
       schema: checkUserResponseSchema,
     });
   } catch (error) {

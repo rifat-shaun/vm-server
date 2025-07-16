@@ -36,7 +36,7 @@ model User {
   branch        Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  updatedAt     DateTime? @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -46,6 +46,9 @@ model Company {
   name          String  @unique
   address       String? 
 
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime? @updatedAt @map("updated_at")
+
   users         User[]
   branches      Branch[]
 
@@ -53,14 +56,28 @@ model Company {
 }
 
 model Branch {
-  id           String  @id @default(uuid()) @db.Uuid
-  name         String  @unique
-  address      String?
+  id            String  @id @default(uuid()) @db.Uuid
+  name          String  @unique
+  address       String?
   
-  companyId    String  @db.Uuid @map("company_id")
-  company      Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId     String  @db.Uuid @map("company_id")
+  company       Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  users        User[]
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime? @updatedAt @map("updated_at")
+
+  users         User[]
 
   @@map("branches")
+}
+
+model OTP {
+  id            String  @id @default(uuid()) @db.Uuid
+  otp           String
+  expiresAt     DateTime
+  email         String?
+  mobileNumber  String?  @map("mobile_number")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime? @updatedAt @map("updated_at")
 }
