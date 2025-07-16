@@ -1,9 +1,13 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-export const companyResponseSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  address: z.string(),
-});
+import { baseResponseSchema } from '@/response-schema/base.schema'
 
-export type CompanyResponse = z.infer<typeof companyResponseSchema>;
+export const companyResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    id: z.string(),
+    name: z.string(),
+    address: z.string().nullable().optional(),
+  }),
+})
+
+export type CompanyResponse = z.infer<typeof companyResponseSchema>
