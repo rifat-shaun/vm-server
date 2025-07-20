@@ -8,6 +8,7 @@ import {
   verifySessionResponseSchema,
   checkUserResponseSchema,
   resetPasswordResponseSchema,
+  validateOTPResponseSchema,
 } from '@/response-schema';
 import { authService } from '@/services';
 import { AppError } from '@/utils/errors';
@@ -189,6 +190,45 @@ export const forgotPassword = async (req: Request, res: Response) => {
 };
 
 /**
+ * Handles OTP validation and returns temporary token for password reset
+ * @param req - Express request
+ * @param res - Express response
+ */
+export const validateOTP = async (req: Request, res: Response) => {
+  try {
+    const token = await authService.validateOTPAndGenerateToken(req.body.email, req.body.otp);
+
+    sendResponse({
+      res,
+      success: true,
+      message: 'OTP validated successfully',
+      data: { token },
+      schema: validateOTPResponseSchema,
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      sendResponse({
+        res,
+        statusCode: error.statusCode,
+        success: false,
+        message: error.message,
+        errors: { code: error.code, details: error.details },
+        schema: errorResponseSchema,
+      });
+    } else {
+      sendResponse({
+        res,
+        statusCode: 500,
+        success: false,
+        message: 'Internal server error',
+        errors: error,
+        schema: errorResponseSchema,
+      });
+    }
+  }
+};
+
+/**
  * Handles reset password request
  * @param req - Express request
  * @param res - Express response
@@ -232,8 +272,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
   }
-}
-
+};
 
 
 /**

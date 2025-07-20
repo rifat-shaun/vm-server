@@ -120,17 +120,74 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
   return user as unknown as Omit<IUserDetails, 'password'>;
 };
 
+/**
+ * Validates OTP and returns a temporary token for password reset
+ * @param email - User's email address
+ * @param otp - OTP to validate
+ * @returns Temporary JWT token for password reset
+ */
+export const validateOTPAndGenerateToken = async (email: string, otp: string): Promise<string> => {
+  const user = await UserRepository.findByEmail(email);
+
+  if (!user) {
+    throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND);
+  }
+
+  // Import validateOTP from utils
+  const { validateOTP, removeOTP } = await import('@/utils/otp');
+  
+  const isValidOTP = validateOTP(email, otp);
+  
+  if (!isValidOTP) {
+    throw AppError.badRequest('Invalid or expired OTP');
+  }
+
+  // Remove the OTP after successful validation
+  removeOTP(email);
+
+  // Generate a short-lived token specifically for password reset
+  if (!process.env.JWT_SECRET) {
+    throw AppError.internal('JWT secret not configured');
+  }
+
+  return jwt.sign(
+    { 
+      userId: user.id, 
+      role: user.role, 
+      email: user.email,
+      purpose: 'password_reset' 
+    }, 
+    process.env.JWT_SECRET, 
+    { expiresIn: '15m' } // Short expiration for security
+  );
+};
 
 /**
- * Resets user password
+ * Resets user password using temporary token
  * @param password - New password
  * @param confirmPassword - Confirm password
- * @param token - JWT token
+ * @param token - Temporary JWT token from OTP validation
  * @returns User data without password
  */
 export const resetPassword = async (password: string, confirmPassword: string, token: string): Promise<Omit<IUserDetails, 'password'>> => {
   try {
-    const user = await verifySession(token);
+    if (!process.env.JWT_SECRET) {
+      throw AppError.internal('JWT secret not configured');
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      userId: string;
+      role: string;
+      email: string;
+      purpose: string;
+    };
+
+    // Verify this token is specifically for password reset
+    if (decoded.purpose !== 'password_reset') {
+      throw AppError.unauthorized('Invalid token purpose');
+    }
+
+    const user = await UserRepository.findById(decoded.userId);
 
     if (!user) {
       throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND);
@@ -146,6 +203,12 @@ export const resetPassword = async (password: string, confirmPassword: string, t
 
     return updatedUser as unknown as Omit<IUserDetails, 'password'>;
   } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw AppError.unauthorized('Invalid token');
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      throw AppError.unauthorized('Token expired');
+    }
     throw error;
   }
 }

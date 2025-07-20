@@ -38,6 +38,12 @@ export const resetPasswordResponseSchema = baseResponseSchema.extend({
   })
 })
 
+export const validateOTPResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    token: z.string()
+  })
+})
+
 export const verifySessionResponseSchema = baseResponseSchema.extend({
   data: z.object({
     user: userSchema

@@ -62,6 +62,13 @@ export const resetPasswordValidation = z.object({
   }),
 })
 
+export const validateOTPValidation = z.object({
+  body: z.object({
+    email: z.string().email('Invalid email format'),
+    otp: z.string().min(6, 'OTP must be 6 digits').max(6, 'OTP must be 6 digits'),
+  }),
+})
+
 export type LoginRequestDto = z.infer<typeof loginValidation>['body']
 export type RegisterRequestDto = z.infer<typeof registerValidation>['body']
 export type ForgotPasswordRequestDto = z.infer<typeof forgotPasswordValidation>['body']
