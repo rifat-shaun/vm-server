@@ -195,7 +195,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
  */
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const user = await authService.resetPassword(req.body.password, req.body.confirmPassword, req.body.token);
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw AppError.unauthorized('No token provided');
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const user = await authService.resetPassword(req.body.password, req.body.confirmPassword, token);
 
     sendResponse({
       res,
