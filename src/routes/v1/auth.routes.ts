@@ -6,6 +6,7 @@ import {
   login,
   register,
   verifySession,
+  resetPassword,
 } from '@/controllers/auth.controller';
 import { validateRequest } from '@/middlewares/validateRequest';
 import {
@@ -13,6 +14,7 @@ import {
   forgotPasswordValidation,
   loginValidation,
   registerValidation,
+  resetPasswordValidation,
 } from '@/validations';
 
 const router = Router();
@@ -22,6 +24,6 @@ router.post('/login', validateRequest(loginValidation), login);
 router.post('/register', validateRequest(registerValidation), register);
 router.post('/forgot-password', validateRequest(forgotPasswordValidation), forgotPassword);
 router.get('/verify-session', verifySession);
-// router.post('/reset-password', validateRequest(resetPasswordValidation), resetPassword)
+router.post('/reset-password', validateRequest(resetPasswordValidation), resetPassword)
 
 export default router;

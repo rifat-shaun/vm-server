@@ -84,13 +84,16 @@ export const generateToken = (userId: string, role: string, email: string): stri
 export const createUser = async (
   userData: IUserSignupInfo
 ): Promise<Omit<IUserDetails, 'password'>> => {
-  const existingUser = await UserRepository.findByEmail(userData.email);
+  const existingUser = await UserRepository.findByEmailOrMobileNumber(
+    userData.email || '',
+    userData.mobileNumber || '',
+  );
 
   if (existingUser) {
-    throw AppError.badRequest('Email already exists', ERROR_CODES.USER_EXISTS);
+    throw AppError.badRequest('Email or mobile number already exists', ERROR_CODES.USER_EXISTS);
   }
 
-  const hashedPassword = await bcrypt.hash(userData.password || '', 10);
+  const hashedPassword = userData.password ? await bcrypt.hash(userData.password, 10) : undefined;
 
   const user = (await UserRepository.create({
     ...userData,
@@ -116,6 +119,36 @@ export const forgotPassword = async (email: string): Promise<Omit<IUserDetails, 
 
   return user as unknown as Omit<IUserDetails, 'password'>;
 };
+
+
+/**
+ * Resets user password
+ * @param password - New password
+ * @param confirmPassword - Confirm password
+ * @param token - JWT token
+ * @returns User data without password
+ */
+export const resetPassword = async (password: string, confirmPassword: string, token: string): Promise<Omit<IUserDetails, 'password'>> => {
+  try {
+    const user = await verifySession(token);
+
+    if (!user) {
+      throw new AppError(404, 'User not found', ERROR_CODES.USER_NOT_FOUND);
+    }
+
+    if (password !== confirmPassword) {
+      throw AppError.badRequest('Passwords do not match');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const updatedUser = await UserRepository.update(user.id, { password: hashedPassword });
+
+    return updatedUser as unknown as Omit<IUserDetails, 'password'>;
+  } catch (error) {
+    throw error;
+  }
+}
 
 /**
  * Verifies JWT token and returns user session information

@@ -32,6 +32,12 @@ export const forgotPasswordResponseSchema = baseResponseSchema.extend({
   })
 })
 
+export const resetPasswordResponseSchema = baseResponseSchema.extend({
+  data: z.object({
+    user: userSchema
+  })
+})
+
 export const verifySessionResponseSchema = baseResponseSchema.extend({
   data: z.object({
     user: userSchema
@@ -44,3 +50,4 @@ export type LoginResponse = z.infer<typeof loginResponseSchema>
 export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
 export type VerifySessionResponse = z.infer<typeof verifySessionResponseSchema>
 export type RegisterResponse = z.infer<typeof registerResponseSchema>
+export type ResetPasswordResponse = z.infer<typeof resetPasswordResponseSchema>

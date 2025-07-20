@@ -7,6 +7,7 @@ import {
   forgotPasswordResponseSchema,
   verifySessionResponseSchema,
   checkUserResponseSchema,
+  resetPasswordResponseSchema,
 } from '@/response-schema';
 import { authService } from '@/services';
 import { AppError } from '@/utils/errors';
@@ -21,9 +22,9 @@ export const checkUser = async (req: Request, res: Response) => {
   try {
     const user = await authService.getUserByEmailOrMobileNumber(req.body);
 
-    const isNewUser = user && !user?.password;
+    const isNewUser = user && !user?.password ? true : false;
 
-    if (isNewUser) {
+    if (isNewUser && user) {
       await authService.sendOTP(user.email);
 
       sendResponse({
@@ -186,6 +187,47 @@ export const forgotPassword = async (req: Request, res: Response) => {
     }
   }
 };
+
+/**
+ * Handles reset password request
+ * @param req - Express request
+ * @param res - Express response
+ */
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const user = await authService.resetPassword(req.body.password, req.body.confirmPassword, req.body.token);
+
+    sendResponse({
+      res,
+      success: true,
+      message: 'Password reset successful',
+      data: { user },
+      schema: resetPasswordResponseSchema,
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      sendResponse({
+        res,
+        statusCode: error.statusCode,
+        success: false,
+        message: error.message,
+        errors: { code: error.code, details: error.details },
+        schema: errorResponseSchema,
+      });
+    } else {
+      sendResponse({
+        res,
+        statusCode: 500,
+        success: false,
+        message: 'Internal server error',
+        errors: error,
+        schema: errorResponseSchema,
+      });
+    }
+  }
+}
+
+
 
 /**
  * Verifies user session using JWT token

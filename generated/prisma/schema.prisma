@@ -27,7 +27,7 @@ model User {
   lastName     String? @map("last_name")
   password     String?
   countryCode  String? @map("country_code")
-  mobileNumber String? @map("mobile_number")
+  mobileNumber String? @unique @map("mobile_number")
 
   companyId String @map("company_id") @db.Uuid
   branchId  String @map("branch_id") @db.Uuid
@@ -35,26 +35,49 @@ model User {
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   branch  Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 model Company {
-  id   String @id @default(uuid()) @db.Uuid
-  name String @unique
+  id      String  @id @default(uuid()) @db.Uuid
+  name    String  @unique
+  address String?
 
-  users User[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  users    User[]
+  branches Branch[]
 
   @@map("companies")
 }
 
 model Branch {
-  id   String @id @default(uuid()) @db.Uuid
-  name String @unique
+  id      String  @id @default(uuid()) @db.Uuid
+  name    String  @unique
+  address String?
+
+  companyId String  @map("company_id") @db.Uuid
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   users User[]
 
   @@map("branches")
+}
+
+model OTP {
+  id           String   @id @default(uuid()) @db.Uuid
+  otp          String
+  expiresAt    DateTime
+  email        String?
+  mobileNumber String?  @map("mobile_number")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 }

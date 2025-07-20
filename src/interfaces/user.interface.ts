@@ -29,7 +29,6 @@ export interface IUserSignupInfo {
 }
 
 export interface IUserUpdateInfo {
-  id: string
   email?: string
   password?: string
   firstName?: string
